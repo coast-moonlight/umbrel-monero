@@ -1,0 +1,47 @@
+\documentclass[sheet=1, prefix]{dexercise}
+
+\title{Computer Security}
+\author{Daniel Knaack}
+
+\begin{document}
+
+\task[Memory Addresses]
+
+\begin{enumerate}
+  \item
+
+  \item
+    \begin{enumerate}
+      \item
+        The most-significant bits \texttt{vaddr[63:p]} determine the page frame number
+        and the page offset is determined by the least-significant bits \texttt{vaddr[p-1:0]}.
+      \item
+        The bits that are used for the page offset are identical since they are
+        used for indexing into the page itself.
+    \end{enumerate}
+  \item
+    For x86\_64, you can usually tell by looking at the most-significant bits
+    since only 48 bits are used to get the physical memory address.
+    If the most-significant bits are set to $1$, then this indicates that it is a kernel memory address.
+    Otherwise, it indicates a user-level address.
+  \item
+    \begin{enumerate}
+      \item
+      \item
+    \end{enumerate}
+  \item
+    This makes it easy to compute the offset from the address.
+    Computing the offset will only require a masking operation instead of an
+    integer division operation for non-power-of-two page sizes.
+  \item
+    Cache contention attack?
+  \item
+
+  \item
+    Depending on the specific CPU, the TLB is flushed or if not, then there is an ID for the specific process,
+    such that another process cannot simply access a memory address stored for a different process.
+\end{enumerate}
+
+\task[Page Fault Side Channel]
+
+\end{document}
