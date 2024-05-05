@@ -11,38 +11,44 @@
 \begin{enumerate}
   \item
     \begin{enumerate}
-      \item
-      \item
+      \item The number of bits needed to determine the cache set is $s$ because there are $2^s$ sets in the cache.
+      \item In a cache with associativity $a$, an eviction set would consist of $a$ cache lines.
     \end{enumerate}
-  \item
+  \item To find the area occupied by a 4 KB memory page in the cache, we first need to calculate the number of cache lines needed for a 4 KB page: $\frac{4\, \text{KB}}{64\, \text{B}} = 64$. Since each set has 8 ways, the area occupied would be $64 \times 8 = 512$ cache lines.
+  \item 
+    \begin{enumerate}
+      \item It's not easy for an attacker to construct an eviction set for L2 and L3 caches because they are larger and more complex, making it harder to predict the cache behavior accurately.
+      \item Hugepages allocate memory in larger chunks, reducing the number of translation lookaside buffer (TLB) entries and, consequently, the number of cache lines needed to map a given memory region. This makes it harder for attackers to construct an eviction set because the relationship between virtual and physical addresses is less predictable.
+    \end{enumerate}
+  \item The cache line size for a modern Intel CPU is typically 64 bytes. If the first address in a cache line is 0x000, the last address within the same cache line would be 0x03F (since 64 in hexadecimal is 0x40, but counting starts from 0).
   \item
     \begin{enumerate}
-      \item
-      \item
+      \item The address corresponding to \texttt{\&page[64]} would be \texttt{0x4000 + 64 * sizeof(char)} since \texttt{page} is a byte array. Given that \texttt{sizeof(char)} is typically 1, the address would be \texttt{0x4000 + 64 = 0x4040}.
+      \item To determine which cache set \texttt{\&page[1<<7 + 1<<6]} gets cached in, we need to calculate the cache set index. \texttt{1<<7} represents shifting 1 by 7 bits (which equals 128) and \texttt{1<<6} represents shifting 1 by 6 bits (which equals 64). So the address would be \texttt{0x4000 + 128 + 64}. To find the cache set index, we take this address modulo the total number of sets: $ (0x4000 + 128 + 64) \mod 4 = 0 $. Therefore, it gets cached in cache set 0.
     \end{enumerate}
-  \item
-  \item
-    \begin{enumerate}
-      \item
-      \item
-    \end{enumerate}
-  \item
+  \item To fill cache set 0 completely with an associativity of 8, we need to allocate 8 memory pages since each set can hold 8 cache lines, one from each memory page.
 \end{enumerate}
 
 \task[Flush+Reload]
 
 \begin{enumerate}
   \item
-    Access to flush instruction.
+  Flush+Reload requires shared memory, cache-coherent architectures, and attacker proximity and Access to flush instruction.
   \item
     \begin{enumerate}
       \item Flush the cache.
       \item Victims fill cache with its own data.
       \item Reload data and measure access time.
     \end{enumerate}
+  \item Limited by the latency of memory access and cache coherence protocols. 
+  \item It provides fine-grained data resolution, revealing memory access patterns.
   \item
-  \item
-  \item
+  \begin{enumerate}
+    \item Insertion Error: Mistakenly identifying a cache access as a result of manipulation when it's from another source.
+    \item Deletion Error: Failing to observe a cache access that should have been evicted due to manipulation.
+    \item Flip: Observing a cache access due to manipulation, but the timing measurement is inaccurate or misleading.
+  \end{enumerate}
+
 \end{enumerate}
 
 \task[Flush+Reload Covert Channel]
@@ -54,15 +60,23 @@
 \task[Prime+Probe]
 
 \begin{enumerate}
-  \item
-  \item
+  \item 
+  \begin{enumerate}
+  \item Execution on the same physical processor.
+  \item High-precision timers.
+  \item Access to shared physical memory.
+  \item Cache manipulation capability.
+  \item Knowledge of cache policies.
+  \end{enumerate}
+  \item 
     \begin{enumerate}
       \item Prime the cache with an eviction set.
       \item Wait while victim evicts cache lines.
       \item Probe the eviction set data and measure access time.
     \end{enumerate}
-  \item
-  \item
+  \item Limited by timer accuracy and memory latency.
+  \item Reveals detailed memory access patterns.
+  \item Transmission errors in Prime+Probe attacks—insertion, deletion, and flip—stem from noise, interference, or timing inaccuracies. Insertion errors arise when false positives mislead the attacker into thinking data is in the cache. Deletion errors occur when false negatives lead to missed cache data detection. Flip errors result from misinterpreting cache state changes due to noise or timing issues, leading to incorrect conclusions about accessed data.
 \end{enumerate}
 
 \task[L1D Prime-Probe Covert Channel]
