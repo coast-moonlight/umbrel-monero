@@ -12,8 +12,8 @@
   \item
     \begin{enumerate}
       \item
-        The number of bits needed to determine the cache set is $s$ because
-        there are $2^s$ sets in the cache.
+        Given an address \texttt{addr[63:0]}, the bits \texttt{addr[s-1:0]}
+        determine the cache set.
       \item
         In a cache with associativity $a$, an eviction set would consist of $a$
         cache lines.
