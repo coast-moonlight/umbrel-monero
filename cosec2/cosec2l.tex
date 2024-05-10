@@ -53,10 +53,11 @@
       \item
         Technically, the \texttt{+} operator has lower precedence than the
         left-shift operator.
-        This means that the actual expression is \texttt{\&page[1 << (7 + 1) << 6]}
-        instead of \texttt{\&page[(1 << 7) + (1 << 6)]}.
+        This means that the actual address is \texttt{\&page[1~<<~(7+1)~<<~6]}
+        instead of \texttt{\&page[(1<<7)~+~(1<<6)]}.
         Therefore, the address is \texttt{0x4000 + (1 << 8 << 6) = 0x4000 +
         0x4000 = 0x8000} instead of \texttt{0x4000 + 0xc0 = 0x40c0}.
+
         However, their cache set index is the same:
         We have four sets and associativity of one, which means we look at the
         four least-significant bits of each address to determine the cache set
