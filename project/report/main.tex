@@ -33,14 +33,32 @@
 
 %\paragraph{Background on SGX-Step attacks}
 %\begin{itemize}
-%  \item Explanation of SGX Technology 
+%  \item Explanation of SGX Technology
 %  \item Brief overview of SGX-Step attacks and their implications
 %\end{itemize}
 
-Modern computing relies heavily on privileged system software to manage interactions and ensure security. However, traditional operating system kernels are susceptible to bugs and vulnerabilities due to their large codebase written in unsafe languages. To address this, recent research has focused on Protected Module Architectures (PMAs), aiming to support isolated execution of security-sensitive components called enclaves with minimal Trusted Computing Base (TCB). Intel’s Software Guard eXtensions (SGX) \cite{intel64and,intel2017intel} represent a significant advancement, providing hardware-enforced trusted computing guarantees. However, vulnerabilities have emerged, particularly in information leakage through attacks exploiting various system components. These vulnerabilities undermine the security promises of SGX.
+Modern computing relies heavily on privileged system software to manage
+interactions and ensure security. However, traditional operating system kernels
+are susceptible to bugs and vulnerabilities due to their large codebase written
+in unsafe languages. To address this, recent research has focused on Protected
+Module Architectures (PMAs), aiming to support isolated execution of
+security-sensitive components called enclaves with minimal Trusted Computing
+Base (TCB). Intel’s Software Guard eXtensions (SGX)
+\cite{intel64and,intel2017intel} represent a significant advancement, providing
+hardware-enforced trusted computing guarantees. However, vulnerabilities have
+emerged, particularly in information leakage through attacks exploiting various
+system components. These vulnerabilities undermine the security promises of
+SGX.
 
 \subsection{Overview of SGX-Step}
-SGX-Step presents a novel framework to address SGX vulnerabilities by enabling precise monitoring of enclave execution at the instruction level. Unlike previous methods, SGX-Step achieves true single-stepping for any enclave program, significantly enhancing the resolution of existing attacks. The framework comprises a Linux kernel driver and a runtime library, providing the means to interrupt enclave execution at the instruction level for detailed observation and analysis.
+
+SGX-Step presents a novel framework to address SGX vulnerabilities by enabling
+precise monitoring of enclave execution at the instruction level. Unlike
+previous methods, SGX-Step achieves true single-stepping for any enclave
+program, significantly enhancing the resolution of existing attacks. The
+framework comprises a Linux kernel driver and a runtime library, providing the
+means to interrupt enclave execution at the instruction level for detailed
+observation and analysis.
 
 \paragraph{Introduction to AEX-Notify}
 \begin{itemize}
@@ -64,27 +82,32 @@ SGX-Step presents a novel framework to address SGX vulnerabilities by enabling p
 
 \section{Related Work}
 \begin{itemize}
-  \item 
+  \item
     Look into the necessary background for the three main mechanisms
     behind this project: SGX-Step, CopyCat and AEX-Notify.
 \end{itemize}
 
-\subsection{SGX-Step} 
+\subsection{SGX-Step}
 \begin{itemize}
   \item Interrupt SGX enclave using APIC timer.
-  \item Problem: Finding the correct time interval to resume right after \texttt{ERESUME} instruction.
+  \item Problem: Finding the correct time interval to resume right after
+    \texttt{ERESUME} instruction.
     \begin{itemize}
-      \item Arriving too early would resume within the \texttt{ERESUME} instruction would result in zero-step.
+      \item Arriving too early would resume within the \texttt{ERESUME}
+        instruction would result in zero-step.
       \item Arriving too late would execute more than one instructions.
     \end{itemize}
-  \item Previous methods configured the timer in kernel space, resulting in large time jitter.
+  \item Previous methods configured the timer in kernel space, resulting in
+    large time jitter.
   \item APIC timer is configured in user space.
 \end{itemize}
 
 \subsection{CopyCat}
 \begin{itemize}
-  \item uses SGX-Step to track intra-page control-flow of an enclave application.
-  \item infers the branch that was taken from data access patterns. See switch example.
+  \item uses SGX-Step to track intra-page control-flow of an enclave
+    application.
+  \item infers the branch that was taken from data access patterns. See switch
+    example.
 \end{itemize}
 
 \subsection{AEX-Notify}
@@ -120,8 +143,10 @@ Instead, it provides the means necessary to implement a mitigation in software.
 
 \paragraph{Software Mitigation}
 The goal of the mitigation is to reduce the latency of the first instruction.
-In order to achieve this, it is important that the first instruction never causes any page faults.
-Otherwise, we would need to walk the page table again increasing the latency of the instruction.
+In order to achieve this, it is important that the first instruction never
+causes any page faults.
+Otherwise, we would need to walk the page table again increasing the latency of
+the instruction.
 Thus, our software mitigation implements a prefetcher.
 This prefetcher will always fetch necessary code and data pages of the resumed
 instruction which ensures that no faults can occur.
