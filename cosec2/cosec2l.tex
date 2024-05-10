@@ -59,12 +59,14 @@
         Therefore, the address is \texttt{0x4000 + (1 << 8 << 6) = 0x4000 +
         0x4000 = 0x8000} instead of \texttt{0x4000 + 0xc0 = 0x40c0}.
 
-        However, their cache set index is the same:
-        We have four sets and associativity of one, which means we look at the
-        four least-significant bits of each address to determine the cache set
-        number.
-        Since both of them are zero, each address would get mapped to the first
-        cache set.
+        In this particular case, the six least-significant bits of the address
+        represent the offset in the cache line, because each cache line has
+        $64$ bytes.
+        The next two bits represent the cache set index.
+        To determine the cache set of each address, we have to look at the bits
+        \texttt{addr[8:6]} of each address.
+        Therefore, the address \texttt{0x8000} is cached in cache set 0 and
+        \texttt{0x40c0} is cached in cache set 3.
     \end{enumerate}
   \item
     To fill cache set 0 completely with an associativity of 8, we need to
