@@ -61,11 +61,15 @@ int main() {
 
     // construct an eviction set for cache set CACHE_SET in the L1D
     // to do so, you can allocate 4KB pages using the following function call:
-	int page_count = 32;
-    void **page = mmap(NULL, page_count * 4096, PROT_READ | PROT_WRITE | PROT_EXEC, MAP_PRIVATE | MAP_ANONYMOUS | MAP_POPULATE, -1, 0);
-	for (int i = 0; i < 64 * page_count; i++) {
-		if (i + 1 < 64 * page_count) {
-			page[i] = &page[64 * (i + 1)];
+	int associativity = 8;
+	int num_sets = 64;
+	int cache_line_size = 64;
+
+    void **page = mmap(NULL, associativity * num_sets * cache_line_size,
+		PROT_READ | PROT_WRITE | PROT_EXEC, MAP_PRIVATE | MAP_ANONYMOUS | MAP_POPULATE, -1, 0);
+	for (int i = 0; i < associativity; i++) {
+		if (i + 1 < associativity) {
+			page[i] = (char *)page + cache_line_size * (CACHE_SET + num_sets * (i + 1));
 		} else {
 			page[i] = NULL;
 		}
@@ -102,13 +106,13 @@ int main() {
 		}
 
         // then convert the bits to a string and print it
-		printf("%s\n", rcv_buf);
+		printf("> %s\n", rcv_buf);
 		seq = 0;
     }
 
     // free all memory regions allocated by calling malloc()
     // unmap all memory regions allocated by calling mmap()
 
-	munmap(page, page_count * 64);
+	munmap(page, associativity * num_sets * cache_line_size);
     return 0;
 }
