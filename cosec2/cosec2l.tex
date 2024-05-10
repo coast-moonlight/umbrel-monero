@@ -51,14 +51,18 @@
         array. Given that \texttt{sizeof(char)} is typically 1, the address
         would be \texttt{0x4000 + 64 = 0x4040}.
       \item
-        To determine which cache set \texttt{\&page[1<<7 + 1<<6]} gets cached
-        in, we need to calculate the cache set index.
-        \texttt{1<<7} represents shifting 1 by 7 bits (which equals 128) and
-        \texttt{1<<6} represents shifting 1 by 6 bits (which equals 64).
-        So the address would be \texttt{0x4000 + 128 + 64}.
-        To find the cache set index, we take this address modulo the total
-        number of sets: $ (0x4000 + 128 + 64) \mod 4 = 0$.
-        Therefore, it gets cached in cache set 0.
+        Technically, the \texttt{+} operator has lower precedence than the
+        left-shift operator.
+        This means that the actual expression is \texttt{\&page[1 << (7 + 1) << 6]}
+        instead of \texttt{\&page[(1 << 7) + (1 << 6)]}.
+        Therefore, the address is \texttt{0x4000 + (1 << 8 << 6) = 0x4000 +
+        0x4000 = 0x8000} instead of \texttt{0x4000 + 0xc0 = 0x40c0}.
+        However, their cache set index is the same:
+        We have four sets and associativity of one, which means we look at the
+        four least-significant bits of each address to determine the cache set
+        number.
+        Since both of them are zero, each address would get mapped to the first
+        cache set.
     \end{enumerate}
   \item
     To fill cache set 0 completely with an associativity of 8, we need to
