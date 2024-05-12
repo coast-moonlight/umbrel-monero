@@ -138,8 +138,9 @@ This induces additional latency in the execution of the instruction, because
 the processor has to walk the page table again.
 Thus, there is a large time frame where the interrupt of the timer could
 arrive and land exactly on the first instruction.
-The goal of AEX-Notify is to reduce the latency of the first instruction
-and make it impossible to land exactly on the first instruction.
+The goal of AEX-Notify \cite{ConstableBCXXAK23} is to reduce the latency of the
+first instruction and make it impossible to land exactly on the first
+instruction.
 
 \paragraph{Hardware Extension}
 AEX-Notify introduces a new flag, called \texttt{AEXNOTIFY}, in the SSA frame.
