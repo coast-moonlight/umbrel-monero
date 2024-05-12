@@ -90,6 +90,10 @@ observation and analysis.
   \item interrupt/exception handling
   \item \texttt{TCS}, \texttt{SSA}, \texttt{TCS.CSSA}
   \item \texttt{EENTER}, \texttt{EEXIT}
+  \item \textbf{Important}: The goal of SGX is \textbf{not} to secure enclave application against
+    side-channel attacks.
+    Applications have to ensure security themselves, for example via
+    constant-time programming techniques.
 \end{itemize}
 
 \subsection{SGX-Step}
