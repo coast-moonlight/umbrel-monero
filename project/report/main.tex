@@ -103,12 +103,9 @@ observation and analysis.
 \end{itemize}
 
 \subsection{CopyCat}
-\begin{itemize}
-  \item uses SGX-Step to track intra-page control-flow of an enclave
-    application.
-  \item infers the branch that was taken from data access patterns. See switch
-    example.
-\end{itemize}
+
+The SGX-Step framework is used by \textsc{CopyCat} to extract control-flow
+information from the enclave application.
 
 \subsection{AEX-Notify}
 \begin{itemize}
@@ -125,7 +122,7 @@ observation and analysis.
 
 The main reason behind the effectiveness of the SGX-Step attack is the assisted
 page-table walk.
-Before resuming the enclave, the SGX-Step framework will clear the present bit
+Before resuming the enclave, the SGX-Step attack will clear the present bit
 on the pages, which causes a page fault when executing the first instruction.
 This induces additional latency in the execution of the instruction, because
 the processor has to walk the page table again.
@@ -134,12 +131,16 @@ arrive and land exactly on the first instruction.
 The goal of AEX-Notify is to reduce the latency of the first instruction
 and make it impossible to land exactly on the first instruction.
 
-\todo{Explain how the instruction works.}
-\todo{Explain the AEX-Notify interrupt mechanism.}
-The first step is an ISA extension that introduces a new instruction \texttt{EDECCSSA}.
-
-AEX-Notify does not work on its own.
-Instead, it provides the means necessary to implement a mitigation in software.
+\paragraph{Hardware Extension}
+AEX-Notify introduces a new flag, called \texttt{AEXNOTIFY}, in the SSA frame.
+Usually when the enclave application is resumed, the previous process context
+is restored.
+However, when the \texttt{AEXNOTIFY} bit is enabled, a custom exception handler
+is executed.
+The exception handler is responsible for handling the AEX and can resume the
+application with an additional instruction, called \texttt{EDECCSSA}.
+This instruction decrements \texttt{TCS.CSSA} and restores the context of the
+enclave application.
 
 \paragraph{Software Mitigation}
 The goal of the mitigation is to reduce the latency of the first instruction.
