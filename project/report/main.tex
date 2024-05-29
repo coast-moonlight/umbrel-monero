@@ -96,6 +96,22 @@ observation and analysis.
     constant-time programming techniques.
 \end{itemize}
 
+\section{Related Work}
+
+This section provides a comprehensive review of existing research and frameworks relevant to the evaluation of AEX-Notify against SGX single-stepping attackers.
+
+\subsection*{2.1 Intel SGX}
+
+Intel Software Guard Extensions (SGX) is a security feature introduced by Intel that enables the creation of secure enclaves within applications \cite{costan2016intel}. Enclaves provide a protected execution environment for sensitive code and data, ensuring confidentiality and integrity even if the host system is compromised. Key components of SGX include:
+
+\begin{itemize}
+    \item \textbf{Memory Management:} SGX enforces memory isolation between enclaves and non-enclave code, preventing unauthorized access to enclave data.
+    \item \textbf{Interrupt/Exception Handling:} SGX provides mechanisms for handling interrupts and exceptions within enclaves, ensuring secure execution even in the presence of external events.
+    \item \textbf{TCS, SSA, TCS.CSSA:} SGX defines structures such as Thread Control Structure (TCS) and Saved State Area (SSA) to manage enclave execution and state transitions. TCS.CSSA refers to the current saved state area within the TCS.
+    \item \textbf{EENTER, EEXIT:} SGX instructions for entering and exiting enclaves, facilitating the secure transition of control flow between enclave and non-enclave code.
+    \item \textbf{Security Goals:} It's important to note that SGX's primary goal is to protect the confidentiality and integrity of enclave data and code, rather than providing defenses against side-channel attacks, which are the responsibility of enclave developers \cite{costan2016intel}.
+\end{itemize}
+
 \subsection{SGX-Step}
 \begin{itemize}
   \item Interrupt SGX enclave using APIC timer.
