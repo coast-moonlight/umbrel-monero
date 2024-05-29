@@ -100,7 +100,7 @@ observation and analysis.
 
 This section provides a comprehensive review of existing research and frameworks relevant to the evaluation of AEX-Notify against SGX single-stepping attackers.
 
-\subsection*{2.1 Intel SGX}
+\subsection{Intel SGX}
 
 Intel Software Guard Extensions (SGX) is a security feature introduced by Intel that enables the creation of secure enclaves within applications \cite{costan2016intel}. Enclaves provide a protected execution environment for sensitive code and data, ensuring confidentiality and integrity even if the host system is compromised. Key components of SGX include:
 
@@ -113,24 +113,19 @@ Intel Software Guard Extensions (SGX) is a security feature introduced by Intel 
 \end{itemize}
 
 \subsection{SGX-Step}
+
+SGX-Step is a framework designed to address vulnerabilities in SGX by enabling precise monitoring of enclave execution at the instruction level \cite{arnautov2016scone}. Key aspects of SGX-Step include:
+
 \begin{itemize}
-  \item Interrupt SGX enclave using APIC timer.
-  \item Problem: Finding the correct time interval to resume right after
-    \texttt{ERESUME} instruction.
-    \begin{itemize}
-      \item Arriving too early would resume within the \texttt{ERESUME}
-        instruction would result in zero-step.
-      \item Arriving too late would execute more than one instructions.
-    \end{itemize}
-  \item Previous methods configured the timer in kernel space, resulting in
-    large time jitter.
-  \item APIC timer is configured in user space.
+    \item \textbf{Interrupting SGX Enclaves:} SGX-Step utilizes the APIC timer to interrupt enclave execution at specific intervals, allowing for detailed observation and analysis.
+    \item \textbf{Challenges:} Previous methods for interrupting enclave execution often resulted in large time jitter, making it difficult to precisely control the timing of interrupts.
+    \item \textbf{Improved Precision:} SGX-Step overcomes these challenges by configuring the APIC timer in user space, enabling finer control over interrupt timing and reducing time jitter \cite{arnautov2016scone}.
 \end{itemize}
 
 \subsection{CopyCat}
 
-The SGX-Step framework is used by \textsc{CopyCat} to extract control-flow
-information from the enclave application.
+CopyCat is a framework that utilizes SGX-Step to extract control-flow information from SGX enclaves \cite{arnautov2016scone}. By analyzing the timing of interrupts and observing enclave behavior, CopyCat can infer the control flow of enclave applications.
+
 
 \subsection{AEX-Notify}
 
