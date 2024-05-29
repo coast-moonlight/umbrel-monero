@@ -203,6 +203,54 @@ it is unlikely that an interrupt would arrive exactly on the first instruction.
     \item Comparative analysis of enclave execution
 \end{itemize}
 
+\section{Methodology}
+
+\subsection{Single-stepping Attack Implementation}
+
+The single-stepping attack, also known as the Zigzagger attack, aims to exploit vulnerabilities in SGX enclaves by interrupting enclave execution at precise intervals. This section provides a detailed overview of the Zigzagger attack methods and a step-by-step implementation guide.
+
+\textbf{Introduction to Zigzagger Attack Methods:}
+The Zigzagger attack utilizes techniques to interrupt SGX enclave execution at the instruction level, thereby enabling the extraction of control-flow information. It involves precise timing to resume execution either before or after specific instructions, allowing an attacker to gather sensitive information.
+
+\textbf{Step-by-step Implementation Guide:}
+\begin{enumerate}
+  \item \textbf{Identifying Target Enclaves:} The first step involves selecting target SGX enclaves susceptible to single-stepping attacks.
+  \item \textbf{Setting Interrupt Intervals:} Determine the optimal timing intervals for interrupting enclave execution to capture control-flow information effectively.
+  \item \textbf{Implementing Interruption Mechanism:} Develop the mechanism to interrupt enclave execution using techniques such as APIC timers.
+  \item \textbf{Fine-tuning Timing:} Adjust timing parameters to ensure the interruption occurs at critical points during enclave execution.
+  \item \textbf{Testing and Validation:} Validate the implementation by running test scenarios to verify the effectiveness of the single-stepping attack in extracting control-flow information.
+\end{enumerate}
+
+\subsection{Experimental Setup}
+
+This section outlines the hardware and software specifications of the experimental environment, including configuration details necessary for conducting the evaluation.
+
+\textbf{Hardware and Software Specifications:}
+\begin{itemize}
+  \item Intel Core i7 10th Gen, 16GB DDR4 RAM, and SSD storage.
+  \item Ubuntu 20.04 LTS (Linux kernel version 5.10) with SGX driver support. Use SGX SDK for enclave development.
+\end{itemize}
+
+\textbf{Configuration Details:}
+\begin{itemize}
+  \item Configure SGX environment with appropriate BIOS settings and SGX driver installation. Utilize SGX SDK for enclave development.
+  \item Set up the environment to execute the single-stepping attack. Select target enclaves and configure attack parameters for testing.
+\end{itemize}
+
+\subsection{Implementation Details for Applying AEX-Notify}
+
+Explain how AEX-Notify is integrated into the experimental setup
+
+\textbf{Integration with Experimental Setup:}
+\begin{itemize}
+  \item Integrate AEX-Notify into existing SGX environment by modifying enclave code to enable AEX-Notify functionality. Ensure compatibility with enclave execution flow and security requirements.
+\end{itemize}
+
+\textbf{Configuration and Setup Details:}
+\begin{itemize}
+  \item Enable AEX-Notify within the SGX enclave environment by setting appropriate flags or parameters during enclave initialization. Configure AEX-Notify to intercept and handle exceptions caused by single-stepping attacks.
+\end{itemize}
+
 \section{Discussion}
 \begin{itemize}
   \item Discussion of findings and interpretation of results
