@@ -120,6 +120,7 @@ CopyCat \cite{MoghimiBHPS20} is a framework that utilizes SGX-Step to extract co
 \end{itemize}
 
 \subsection{AEX-Notify}
+\label{sec:aex-notify}
 
 \begin{figure}[t]
   \centering
@@ -221,6 +222,10 @@ Explain how AEX-Notify is integrated into the experimental setup
 \begin{itemize}
   \item Enable AEX-Notify within the SGX enclave environment by setting appropriate flags or parameters during enclave initialization. Configure AEX-Notify to intercept and handle exceptions caused by single-stepping attacks.
 \end{itemize}
+
+We enable AEX-Notify by adding an additional field in the enclave configuration.
+The exception handler is preconfigured to use the trusted runtime system of the SDK.
+This is the same handler as described in Section~\ref{sec:aex-notify}.
 
 \section{Results}
 
