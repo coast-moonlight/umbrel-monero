@@ -90,8 +90,9 @@ Key components of SGX include:
     SGX enforces memory isolation between enclaves and non-enclave code,
     preventing unauthorized access to enclave data.
   \item \textbf{Interrupt/Exception Handling:}
-    SGX provides mechanisms for handling interrupts and exceptions within enclaves,
-    ensuring secure execution even in the presence of external events.
+    When an interrupt occurs, it triggers an AEX (Asynchronous Enclave eXit),
+    which saves the application state in the current SSA.
+    However, the enclave application has no mechanism (without AEX-Notify) to detect an interrupt.
   \item \textbf{TCS, SSA, TCS.CSSA:}
     SGX defines structures such as Thread Control Structure (TCS) and Saved State Area (SSA)
     to manage enclave execution and state transitions.
