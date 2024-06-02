@@ -32,26 +32,25 @@
 
 \section{Motivation}
 
-Modern computing relies heavily on privileged system software to manage
-interactions and ensure security. However, traditional operating system kernels
-are susceptible to bugs and vulnerabilities due to their large codebase written
-in unsafe languages. To address this, recent research has focused on Protected
-Module Architectures (PMAs), aiming to support isolated execution of
-security-sensitive components called enclaves with minimal Trusted Computing
-Base (TCB). Intel’s Software Guard eXtensions (SGX)
-\cite{Intel16,Intel17} represent a significant advancement, providing
-hardware-enforced trusted computing guarantees. However, vulnerabilities have
-emerged, particularly in information leakage through attacks exploiting various
-system components. These vulnerabilities undermine the security promises of
-SGX.
+Modern computing relies heavily on privileged system software to manage interactions and ensure security.
+However, traditional operating system kernels are susceptible to bugs and vulnerabilities
+due to their large codebase written in unsafe languages.
+To address this, recent research has focused on Protected Module Architectures (PMAs),
+aiming to support isolated execution of security-sensitive components
+called enclaves with minimal Trusted Computing Base (TCB).
+Intel’s Software Guard eXtensions (SGX) \cite{Intel16,Intel17} represent a significant advancement,
+providing hardware-enforced trusted computing guarantees.
+However, vulnerabilities have emerged, particularly in information leakage
+through attacks exploiting various system components.
+These vulnerabilities undermine the security promises of SGX.
 
 SGX-Step presents a novel framework to address SGX vulnerabilities by enabling
-precise monitoring of enclave execution at the instruction level. Unlike
-previous methods, SGX-Step achieves true single-stepping for any enclave
-program, significantly enhancing the resolution of existing attacks. The
-framework comprises a Linux kernel driver and a runtime library, providing the
-means to interrupt enclave execution at the instruction level for detailed
-observation and analysis.
+precise monitoring of enclave execution at the instruction level.
+Unlike previous methods, SGX-Step achieves true single-stepping for any enclave program,
+significantly enhancing the resolution of existing attacks.
+The framework comprises a Linux kernel driver and a runtime library,
+providing the means to interrupt enclave execution at the instruction level
+for detailed observation and analysis.
 
 \paragraph{Introduction to AEX-Notify}
 \begin{itemize}
@@ -75,33 +74,61 @@ observation and analysis.
 
 \section{Background}
 
-This section provides a comprehensive review of existing research and frameworks relevant to the evaluation of AEX-Notify against SGX single-stepping attackers.
+This section provides a comprehensive review of existing research and frameworks
+relevant to the evaluation of AEX-Notify against SGX single-stepping attackers.
 
 \subsection{Intel SGX}
 
-Intel Software Guard Extensions (SGX) is a security feature introduced by Intel that enables the creation of secure enclaves within applications \cite{CostanD16}. Enclaves provide a protected execution environment for sensitive code and data, ensuring confidentiality and integrity even if the host system is compromised. Key components of SGX include:
+Intel Software Guard Extensions (SGX) is a security feature introduced by Intel
+that enables the creation of secure enclaves within applications \cite{CostanD16}.
+Enclaves provide a protected execution environment for sensitive code and data,
+ensuring confidentiality and integrity even if the host system is compromised.
+Key components of SGX include:
 
 \begin{itemize}
-    \item \textbf{Memory Management:} SGX enforces memory isolation between enclaves and non-enclave code, preventing unauthorized access to enclave data.
-    \item \textbf{Interrupt/Exception Handling:} SGX provides mechanisms for handling interrupts and exceptions within enclaves, ensuring secure execution even in the presence of external events.
-    \item \textbf{TCS, SSA, TCS.CSSA:} SGX defines structures such as Thread Control Structure (TCS) and Saved State Area (SSA) to manage enclave execution and state transitions. TCS.CSSA refers to the current saved state area within the TCS.
-    \item \textbf{EENTER, EEXIT:} SGX instructions for entering and exiting enclaves, facilitating the secure transition of control flow between enclave and non-enclave code.
-    \item \textbf{Security Goals:} It's important to note that SGX's primary goal is to protect the confidentiality and integrity of enclave data and code, rather than providing defenses against side-channel attacks, which are the responsibility of enclave developers \cite{CostanD16}.
+  \item \textbf{Memory Management:}
+    SGX enforces memory isolation between enclaves and non-enclave code,
+    preventing unauthorized access to enclave data.
+  \item \textbf{Interrupt/Exception Handling:}
+    SGX provides mechanisms for handling interrupts and exceptions within enclaves,
+    ensuring secure execution even in the presence of external events.
+  \item \textbf{TCS, SSA, TCS.CSSA:}
+    SGX defines structures such as Thread Control Structure (TCS) and Saved State Area (SSA)
+    to manage enclave execution and state transitions.
+    \texttt{TCS.CSSA} refers to the current saved state area within the TCS.
+  \item \textbf{EENTER, EEXIT:}
+    SGX instructions for entering and exiting enclaves,
+    facilitating the secure transition of control flow between enclave and non-enclave code.
+  \item \textbf{Security Goals:}
+    It's important to note that SGX's primary goal is to protect
+    the confidentiality and integrity of enclave data and code,
+    rather than providing defenses against side-channel attacks,
+    which are the responsibility of enclave developers \cite{CostanD16}.
 \end{itemize}
 
 \subsection{SGX-Step}
 
-SGX-Step is a framework designed to address vulnerabilities in SGX by enabling precise monitoring of enclave execution at the instruction level \cite{ArnautovTGKMPLM16}. Key aspects of SGX-Step include:
+SGX-Step is a framework designed to address vulnerabilities in SGX
+by enabling precise monitoring of enclave execution at the instruction level \cite{ArnautovTGKMPLM16}.
+Key aspects of SGX-Step include:
 
 \begin{itemize}
-    \item \textbf{Interrupting SGX Enclaves:} SGX-Step utilizes the APIC timer to interrupt enclave execution at specific intervals, allowing for detailed observation and analysis.
-    \item \textbf{Challenges:} Previous methods for interrupting enclave execution often resulted in large time jitter, making it difficult to precisely control the timing of interrupts.
-    \item \textbf{Improved Precision:} SGX-Step overcomes these challenges by configuring the APIC timer in user space, enabling finer control over interrupt timing and reducing time jitter \cite{ArnautovTGKMPLM16}.
+    \item \textbf{Interrupting SGX Enclaves:}
+      SGX-Step utilizes the APIC timer to interrupt enclave execution at specific intervals,
+      allowing for detailed observation and analysis.
+    \item \textbf{Challenges:}
+      Previous methods for interrupting enclave execution often resulted in large time jitter,
+      making it difficult to precisely control the timing of interrupts.
+    \item \textbf{Improved Precision:}
+      SGX-Step overcomes these challenges by configuring the APIC timer in user space,
+      enabling finer control over interrupt timing and reducing time jitter \cite{ArnautovTGKMPLM16}.
 \end{itemize}
 
 \subsection{CopyCat}
 
-CopyCat \cite{MoghimiBHPS20} is a framework that utilizes SGX-Step to extract control-flow information from SGX enclaves. By analyzing the timing of interrupts and observing enclave behavior, CopyCat can infer the control flow of enclave applications.
+CopyCat \cite{MoghimiBHPS20} is a framework that utilizes SGX-Step to extract control-flow information from SGX enclaves.
+By analyzing the timing of interrupts and observing enclave behavior,
+CopyCat can infer the control flow of enclave applications.
 
 \begin{itemize}
   \item \textbf{General Idea}: Count the number of instructions on each code/data page
@@ -174,10 +201,16 @@ it is unlikely that an interrupt would arrive exactly on the first instruction.
 
 \subsection{Single-stepping Attack Implementation}
 
-The single-stepping attack, also known as the Zigzagger attack, aims to exploit vulnerabilities in SGX enclaves by interrupting enclave execution at precise intervals. This section provides a detailed overview of the Zigzagger attack methods and a step-by-step implementation guide.
+The single-stepping attack, also known as the Zigzagger attack,
+aims to exploit vulnerabilities in SGX enclaves
+by interrupting enclave execution at precise intervals.
+This section provides a detailed overview of the Zigzagger attack methods and a step-by-step implementation guide.
 
 \textbf{Introduction to Zigzagger Attack Methods:}
-The Zigzagger attack utilizes techniques to interrupt SGX enclave execution at the instruction level, thereby enabling the extraction of control-flow information. It involves precise timing to resume execution either before or after specific instructions, allowing an attacker to gather sensitive information.
+The Zigzagger attack utilizes techniques to interrupt SGX enclave execution at the instruction level,
+thereby enabling the extraction of control-flow information.
+It involves precise timing to resume execution either before or after specific instructions,
+allowing an attacker to gather sensitive information.
 
 \textbf{Step-by-step Implementation Guide:}
 \begin{enumerate}
