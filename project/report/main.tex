@@ -213,10 +213,13 @@ Explain how AEX-Notify is integrated into the experimental setup
 \end{itemize}
 
 \section{Results}
+
 \begin{itemize}
-  \item Discussion of findings and interpretation of results
-  \item Implications for SGX security
-  \item Limitations of the study and challenges faced during the study
+  \item After enabling AEX-Notify, we can no longer single-step (This is the most basic requirement, so not really special)
+  \item The interrupt lands in the exception handler most of the time
+  \item For pages without any return, the interrupt arrives during the C3 cache lookup.
+  \item \textbf{TODO}: Where does the exception handler rollback when interrupting the small assembly stub?
+  \item \textbf{TODO}: Can we differentiate between zero-step and multi-step by simulating a cache attack?
 \end{itemize}
 
 \section{Conclusion and Future Work}
