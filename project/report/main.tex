@@ -84,29 +84,29 @@ This section provides a comprehensive review of existing research and frameworks
 
 \subsection{Intel SGX}
 
-Intel Software Guard Extensions (SGX) is a security feature introduced by Intel that enables the creation of secure enclaves within applications \cite{costan2016intel}. Enclaves provide a protected execution environment for sensitive code and data, ensuring confidentiality and integrity even if the host system is compromised. Key components of SGX include:
+Intel Software Guard Extensions (SGX) is a security feature introduced by Intel that enables the creation of secure enclaves within applications \cite{CostanD16}. Enclaves provide a protected execution environment for sensitive code and data, ensuring confidentiality and integrity even if the host system is compromised. Key components of SGX include:
 
 \begin{itemize}
     \item \textbf{Memory Management:} SGX enforces memory isolation between enclaves and non-enclave code, preventing unauthorized access to enclave data.
     \item \textbf{Interrupt/Exception Handling:} SGX provides mechanisms for handling interrupts and exceptions within enclaves, ensuring secure execution even in the presence of external events.
     \item \textbf{TCS, SSA, TCS.CSSA:} SGX defines structures such as Thread Control Structure (TCS) and Saved State Area (SSA) to manage enclave execution and state transitions. TCS.CSSA refers to the current saved state area within the TCS.
     \item \textbf{EENTER, EEXIT:} SGX instructions for entering and exiting enclaves, facilitating the secure transition of control flow between enclave and non-enclave code.
-    \item \textbf{Security Goals:} It's important to note that SGX's primary goal is to protect the confidentiality and integrity of enclave data and code, rather than providing defenses against side-channel attacks, which are the responsibility of enclave developers \cite{costan2016intel}.
+    \item \textbf{Security Goals:} It's important to note that SGX's primary goal is to protect the confidentiality and integrity of enclave data and code, rather than providing defenses against side-channel attacks, which are the responsibility of enclave developers \cite{CostanD16}.
 \end{itemize}
 
 \subsection{SGX-Step}
 
-SGX-Step is a framework designed to address vulnerabilities in SGX by enabling precise monitoring of enclave execution at the instruction level \cite{arnautov2016scone}. Key aspects of SGX-Step include:
+SGX-Step is a framework designed to address vulnerabilities in SGX by enabling precise monitoring of enclave execution at the instruction level \cite{ArnautovTGKMPLM16}. Key aspects of SGX-Step include:
 
 \begin{itemize}
     \item \textbf{Interrupting SGX Enclaves:} SGX-Step utilizes the APIC timer to interrupt enclave execution at specific intervals, allowing for detailed observation and analysis.
     \item \textbf{Challenges:} Previous methods for interrupting enclave execution often resulted in large time jitter, making it difficult to precisely control the timing of interrupts.
-    \item \textbf{Improved Precision:} SGX-Step overcomes these challenges by configuring the APIC timer in user space, enabling finer control over interrupt timing and reducing time jitter \cite{arnautov2016scone}.
+    \item \textbf{Improved Precision:} SGX-Step overcomes these challenges by configuring the APIC timer in user space, enabling finer control over interrupt timing and reducing time jitter \cite{ArnautovTGKMPLM16}.
 \end{itemize}
 
 \subsection{CopyCat}
 
-CopyCat is a framework that utilizes SGX-Step to extract control-flow information from SGX enclaves \cite{arnautov2016scone}. By analyzing the timing of interrupts and observing enclave behavior, CopyCat can infer the control flow of enclave applications.
+CopyCat is a framework that utilizes SGX-Step to extract control-flow information from SGX enclaves \cite{ArnautovTGKMPLM16}. By analyzing the timing of interrupts and observing enclave behavior, CopyCat can infer the control flow of enclave applications.
 
 
 \subsection{AEX-Notify}
