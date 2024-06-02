@@ -108,6 +108,16 @@ SGX-Step is a framework designed to address vulnerabilities in SGX by enabling p
 
 CopyCat \cite{MoghimiBHPS20} is a framework that utilizes SGX-Step to extract control-flow information from SGX enclaves. By analyzing the timing of interrupts and observing enclave behavior, CopyCat can infer the control flow of enclave applications.
 
+\begin{itemize}
+  \item \textbf{General Idea}: Count the number of instructions on each code/data page
+    and compare the page sequences of each execution with the binary to infer
+    the control-flow.
+  \item \textbf{Example from the paper}: If statement where else is on different page,
+    the instruction sequence when the if branch is taken is $(P_0, P_0, S, P_1)$ and
+    $(P_0, P_0, P_0, S, P_1)$ when else branch is taken.
+  \item Attack also works for intra-page control-flow, i.e. when a branch stays
+    within the same page, by counting each code page and each data page access.
+\end{itemize}
 
 \subsection{AEX-Notify}
 
