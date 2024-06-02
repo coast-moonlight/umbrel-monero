@@ -118,6 +118,8 @@ making it difficult to precisely control the timing of interrupts.
 SGX-Step overcomes these challenges by configuring the APIC timer in user space,
 enabling finer control over interrupt timing and reducing time jitter \cite{ArnautovTGKMPLM16}.
 
+\todo[inline]{Explain why SGX-Step is important $\to$ It enables side-channel attacks at instruction-level granularity}
+
 \subsection{CopyCat}
 
 CopyCat \cite{MoghimiBHPS20} is a framework that utilizes SGX-Step to extract control-flow information from SGX enclaves.
@@ -188,6 +190,11 @@ Last, it could arrive perfectly on the first instruction.
 This is the exact case that we are trying to avoid.
 However, since the code and data pages for this instruction have already been prefetched,
 it is unlikely that an interrupt would arrive exactly on the first instruction.
+
+\todo[inline]{
+  Explain more details about the software part, i.e. the constant-time decoder,
+  c3 cache, etc. This could also be something in the work description.
+}
 
 \section{Work Description}
 
