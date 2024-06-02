@@ -80,24 +80,6 @@ observation and analysis.
 
 \section{Related Work}
 
-\todo{There should be some introductory text here. From the moodle: ``Never have two titles following each other.''}
-
-\subsection{Intel SGX}
-
-\todo[inline]{Explain the basics of SGX.}
-\begin{itemize}
-  \item memory Management
-  \item interrupt/exception handling
-  \item \texttt{TCS}, \texttt{SSA}, \texttt{TCS.CSSA}
-  \item \texttt{EENTER}, \texttt{EEXIT}
-  \item \textbf{Important}: The goal of SGX is \textbf{not} to secure enclave application against
-    side-channel attacks.
-    Applications have to ensure security themselves, for example via
-    constant-time programming techniques.
-\end{itemize}
-
-\section{Related Work}
-
 This section provides a comprehensive review of existing research and frameworks relevant to the evaluation of AEX-Notify against SGX single-stepping attackers.
 
 \subsection{Intel SGX}
@@ -181,38 +163,6 @@ Last, it could arrive perfectly on the first instruction.
 This is the exact case that we are trying to avoid.
 However, since the code and data pages for this instruction have already been prefetched,
 it is unlikely that an interrupt would arrive exactly on the first instruction.
-
-\section{Methodology}
-
-\subsection{Single-stepping attack implementation}
-\begin{itemize}
-  \item Introduction to Zigzagger attack methods
-  \item Step-by-step implementation guide
-  \item Code snippets and explanations
-\end{itemize}
-
-\subsection{Experimental Setup}
-\begin{itemize}
-  \item Hardware and Software specifications
-  \item Configuration details
-\end{itemize}
-
-\subsection{Implementation details for applying AEX-Notify}
-\begin{itemize}
-  \item How AEX-Notify is integrated into the experimental setup
-  \item Configuration and setup details
-\end{itemize}
-
-\section{Evaluation and Results}
-\subsection{Analysis of Single-stepping attack results}
-\begin{itemize}
-    \item Observations and findings
-\end{itemize}
-\subsection{AEX-Notify Countermeasure}
-\begin{itemize}
-    \item Performance metrics with AEX-Notify
-    \item Comparative analysis of enclave execution
-\end{itemize}
 
 \section{Methodology}
 
