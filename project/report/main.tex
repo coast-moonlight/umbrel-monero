@@ -147,7 +147,7 @@ CopyCat can infer the control flow of enclave applications.
 
 The main reason behind the effectiveness of the SGX-Step attack is the assisted
 page-table walk.
-Before resuming the enclave, the SGX-Step attack will clear the present bit
+Before resuming the enclave, the SGX-Step attack clears the present bit
 on the pages, which causes a page fault when executing the first instruction.
 This induces additional latency in the execution of the instruction, because
 the processor has to walk the page table again.
@@ -157,24 +157,22 @@ The goal of AEX-Notify \cite{ConstableBCXXAK23} is to reduce the latency of the
 first instruction and make it impossible to land exactly on the first
 instruction.
 
-\paragraph{Hardware Extension}
-AEX-Notify introduces a new flag, called \texttt{AEXNOTIFY}, in the SSA frame.
-Usually when the enclave application is resumed, the previous process context
-is restored.
-However, when the \texttt{AEXNOTIFY} bit is enabled, a custom exception handler
-is executed.
-The exception handler is responsible for handling the AEX and can resume the
-application with an additional instruction, called \texttt{EDECCSSA}.
-This instruction decrements \texttt{TCS.CSSA} and restores the context of the
-enclave application.
+The first part of AEX-Notify is the hardware extension.
+It introduces a new flag in the SSA frame, called \texttt{AEXNOTIFY}.
+By enabling this flag, we can change the behavior of the \texttt{ERESUME} instruction,
+which resumes the enclave.
+Usually, \texttt{ERESUME} restores the previous process context,
+however, when the \texttt{AEXNOTIFY} bit is enabled,
+a custom exception handler is executed.
+The exception handler is responsible for handling the AEX and
+can resume the enclave application with an additional instruction, called \texttt{EDECCSSA}.
+This instruction decrements \texttt{TCS.CSSA} and restores the context of the enclave application.
 
-\paragraph{Software Mitigation}
-The goal of the mitigation is to reduce the latency of the first instruction.
-In order to achieve this, it is important that the first instruction never
-causes any page faults.
-Otherwise, we would need to walk the page table again increasing the latency of
-the instruction.
-Thus, our software mitigation implements a prefetcher.
+The second part of AEX-Notify is the custom exception handler.
+The goal of the exception handler is to reduce the latency of the first instruction.
+In order to achieve this, it is important that the first instruction never causes any page faults.
+Otherwise, we would need to walk the page table again which would increase the latency of the first instruction.
+Thus, the software mitigation implements a prefetcher.
 This prefetcher will always fetch necessary code and data pages of the resumed
 instruction which ensures that no faults can occur.
 
