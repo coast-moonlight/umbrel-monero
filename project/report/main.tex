@@ -29,7 +29,7 @@
 %\end{abstract}
 
 
-\section{Introduction}
+\section{Motivation}
 
 %\paragraph{Background on SGX-Step attacks}
 %\begin{itemize}
@@ -78,7 +78,7 @@ observation and analysis.
     information with and without AEX-Notify enabled.
 \end{itemize}
 
-\section{Related Work}
+\section{Background}
 
 This section provides a comprehensive review of existing research and frameworks relevant to the evaluation of AEX-Notify against SGX single-stepping attackers.
 
@@ -164,7 +164,7 @@ This is the exact case that we are trying to avoid.
 However, since the code and data pages for this instruction have already been prefetched,
 it is unlikely that an interrupt would arrive exactly on the first instruction.
 
-\section{Methodology}
+\section{Work Description}
 
 \subsection{Single-stepping Attack Implementation}
 
@@ -212,7 +212,7 @@ Explain how AEX-Notify is integrated into the experimental setup
   \item Enable AEX-Notify within the SGX enclave environment by setting appropriate flags or parameters during enclave initialization. Configure AEX-Notify to intercept and handle exceptions caused by single-stepping attacks.
 \end{itemize}
 
-\section{Discussion}
+\section{Results}
 \begin{itemize}
   \item Discussion of findings and interpretation of results
   \item Implications for SGX security
