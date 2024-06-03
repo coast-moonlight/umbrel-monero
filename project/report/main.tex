@@ -125,10 +125,9 @@ enabling finer control over interrupt timing and reducing time jitter \cite{Arna
 
 \subsection{CopyCat}
 
-Showing the effectiveness of SGX-Step,
 CopyCat \cite{MoghimiBHPS20} utilizes the framework
 to infer fine-grained control-flow information from SGX enclaves.
-CopyCat improves upon traditional page-fault adversaries,
+It improves upon traditional page-fault adversaries,
 that can only page accesses at a 4 KiB resolution,
 with the single-stepping capabilities of SGX-Step.
 
@@ -231,7 +230,7 @@ We have used an example application provided in the SGX-Step repository for this
 This example consists only of a series of \texttt{nop} instructions and
 reports the instruction pointer after each interrupt.
 If the instruction pointer is incremented by one instruction each interrupt,
-then we know that we are single-stepping the enclave.
+then we can be sure that we are single-stepping the enclave.
 
 \subsection{Single-stepping Attack Implementation}
 
