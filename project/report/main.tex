@@ -147,7 +147,10 @@ The first is the access to the cipher text that is squared on each iteration.
 The second is the write to the output whenever the key bit is one.
 By counting the number of instructions between each data access,
 CopyCat can recover the key even if the cipher text, output and key are on the same page.
-\todo{We should include a figure for square-and-multiply.}
+\todo{We should include a figure for square-and-multiply. It should be based on
+  RSA as the text is talking about cipher text, keys and output. It should also
+  include a square function and addition function such that is clear that these
+  are separate function on different pages.}
 
 \todo[inline]{Add paragraph explaining why this is a problem in the context of
   the SGX attacker model. Because technically side-channel attacks are not a
