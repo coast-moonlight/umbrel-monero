@@ -146,17 +146,6 @@ By counting the number of instructions between each data access,
 CopyCat can recover the key even if the cipher text, output and key are on the same page.
 \todo{We should include a figure for square-and-multiply.}
 
-\begin{itemize}
-  \item \textbf{General Idea}: Count the number of instructions on each code/data page
-    and compare the page sequences of each execution with the binary to infer
-    the control-flow.
-  \item \textbf{Example from the paper}: If statement where else is on different page,
-    the instruction sequence when the if branch is taken is $(P_0, P_0, S, P_1)$ and
-    $(P_0, P_0, P_0, S, P_1)$ when else branch is taken.
-  \item Attack also works for intra-page control-flow, i.e. when a branch stays
-    within the same page, by counting each code page and each data page access.
-\end{itemize}
-
 \subsection{AEX-Notify}
 \label{sec:aex-notify}
 
