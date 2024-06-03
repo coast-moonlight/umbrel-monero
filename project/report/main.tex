@@ -122,9 +122,29 @@ enabling finer control over interrupt timing and reducing time jitter \cite{Arna
 
 \subsection{CopyCat}
 
-CopyCat \cite{MoghimiBHPS20} is a framework that utilizes SGX-Step to extract control-flow information from SGX enclaves.
-By analyzing the timing of interrupts and observing enclave behavior,
-CopyCat can infer the control flow of enclave applications.
+Showing the effectiveness of SGX-Step,
+CopyCat \cite{MoghimiBHPS20} utilizes the framework
+to infer fine-grained control-flow information from SGX enclaves.
+CopyCat improves upon traditional page-fault adversaries,
+that can only page accesses at a 4 KiB resolution,
+with the single-stepping capabilities of SGX-Step.
+
+In a typical square-and-multiply implementation,
+we can use page faults to extract the key.
+On each iteration we can induce a fault by clearing the execute permission on
+the page with the \emph{square} function.
+Tracking access in each iteration, we can fully recover the key from only page faults.
+
+Traditional page-fault adversaries fail at recovering the key when the entire
+square-and-multiply procedure fits on a single page.
+CopyCat overcomes this challenge by single-stepping the enclave and counting the
+number of instructions until a data page was accessed.
+In the example of square-and-multiply, there are two data accesses of interest.
+The first is the access to the cipher text that is squared on each iteration.
+The second is the write to the output whenever the key bit is one.
+By counting the number of instructions between each data access,
+CopyCat can recover the key even if the cipher text, output and key are on the same page.
+\todo{We should include a figure for square-and-multiply.}
 
 \begin{itemize}
   \item \textbf{General Idea}: Count the number of instructions on each code/data page
