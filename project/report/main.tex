@@ -221,6 +221,18 @@ it is unlikely that an interrupt would arrive exactly on the first instruction.
 
 The goal of this project is to analyze the effectiveness of AEX-Notify.
 
+\subsection{Initializing SGX-Step}
+
+SGX-Step requires careful configuration of the APIC timer
+since it is crucial for the attack to work.
+If the value is too small, then we will zero-step and execute the same instruction multiple times.
+If the value is too large, then we will multi-step and execute multiple instruction.
+We have used an example application provided in the SGX-Step repository for this purpose.
+This example consists only of a series of \texttt{nop} instructions and
+reports the instruction pointer after each interrupt.
+If the instruction pointer is incremented by one instruction each interrupt,
+then we know that we are single-stepping the enclave.
+
 \subsection{Single-stepping Attack Implementation}
 
 The single-stepping attack, also known as the Zigzagger attack,
