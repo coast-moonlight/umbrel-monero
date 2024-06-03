@@ -22,11 +22,14 @@
 \maketitle
 
 \begin{abstract}
-  ~ \\
-  \textbf{TODO}: SGX as trusted execution environment for application. Applications are executed inside enclaves. \\
-  $\to$ SGX-Step as means to single-step enclaves and increase effectiveness of side-channel attacks \\
-  $\to$ AEX-Notify as a mitigation for SGX-Step \\
-  $\to$ Goal of the paper: Analyzing AEX-Notify and evaluating its effectiveness against SGX-Step
+  Trusted execution environments (TEEs) like Intel's Software Guard Extensions (SGX)
+  offer a promising avenue for securing applications by executing them within secure enclaves.
+  However, recent advancements in side-channel attack techniques, such as SGX-Step,
+  pose significant threats to the security guarantees provided by SGX.
+  SGX-Step facilitates single-stepping enclaves,
+  thereby enhancing the feasibility of side-channel attacks.
+  In response to this threat, AEX-Notify has been proposed as a potential mitigation against SGX-Step.
+  This paper analyzes the security of AEX-Notify and evaluates its effectiveness against single-stepping.
 \end{abstract}
 
 
