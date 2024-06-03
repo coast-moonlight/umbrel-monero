@@ -101,7 +101,7 @@ Key components of SGX include:
     SGX instructions for entering and exiting enclaves,
     facilitating the secure transition of control flow between enclave and non-enclave code.
   \item \textbf{Security Goals:}
-    It's important to note that SGX's primary goal is to protect
+    It's important to note that the primary goal of SGX is to protect
     the confidentiality and integrity of enclave data and code,
     rather than providing defenses against side-channel attacks,
     which are the responsibility of enclave developers \cite{CostanD16}.
@@ -145,6 +145,10 @@ The second is the write to the output whenever the key bit is one.
 By counting the number of instructions between each data access,
 CopyCat can recover the key even if the cipher text, output and key are on the same page.
 \todo{We should include a figure for square-and-multiply.}
+
+\todo[inline]{Add paragraph explaining why this is a problem in the context of
+  the SGX attacker model. Because technically side-channel attacks are not a
+  concern for SGX, but they still implemented AEX-Notify.}
 
 \subsection{AEX-Notify}
 \label{sec:aex-notify}
@@ -207,6 +211,8 @@ it is unlikely that an interrupt would arrive exactly on the first instruction.
 
 \section{Work Description}
 
+The goal of this project is to analyze the effectiveness of AEX-Notify.
+
 \subsection{Single-stepping Attack Implementation}
 
 The single-stepping attack, also known as the Zigzagger attack,
@@ -241,8 +247,12 @@ This section outlines the hardware and software specifications of the experiment
 
 \textbf{Configuration Details:}
 \begin{itemize}
-  \item Configure SGX environment with appropriate BIOS settings and SGX driver installation. Utilize SGX SDK for enclave development.
-  \item Set up the environment to execute the single-stepping attack. Select target enclaves and configure attack parameters for testing.
+  \item
+    Configure SGX environment with appropriate BIOS settings and SGX driver installation.
+    Utilize SGX SDK for enclave development.
+  \item
+    Set up the environment to execute the single-stepping attack.
+    Select target enclaves and configure attack parameters for testing.
 \end{itemize}
 
 \subsection{Implementation Details for Applying AEX-Notify}
@@ -251,12 +261,17 @@ Explain how AEX-Notify is integrated into the experimental setup
 
 \textbf{Integration with Experimental Setup:}
 \begin{itemize}
-  \item Integrate AEX-Notify into existing SGX environment by modifying enclave code to enable AEX-Notify functionality. Ensure compatibility with enclave execution flow and security requirements.
+  \item
+    Integrate AEX-Notify into existing SGX environment
+    by modifying enclave code to enable AEX-Notify functionality.
+    Ensure compatibility with enclave execution flow and security requirements.
 \end{itemize}
 
 \textbf{Configuration and Setup Details:}
 \begin{itemize}
-  \item Enable AEX-Notify within the SGX enclave environment by setting appropriate flags or parameters during enclave initialization. Configure AEX-Notify to intercept and handle exceptions caused by single-stepping attacks.
+  \item Enable AEX-Notify within the SGX enclave environment
+    by setting appropriate flags or parameters during enclave initialization.
+    Configure AEX-Notify to intercept and handle exceptions caused by single-stepping attacks.
 \end{itemize}
 
 We enable AEX-Notify by adding an additional field in the enclave configuration.
@@ -269,7 +284,8 @@ This is the same handler as described in Section~\ref{sec:aex-notify}.
   \item After enabling AEX-Notify, we can no longer single-step (This is the most basic requirement, so not really special)
   \item The interrupt lands in the exception handler most of the time
   \item For pages without any return, the interrupt arrives during the C3 cache lookup.
-  \item \textbf{TODO}: Where does the exception handler rollback when interrupting the small assembly stub?
+  \item Where does the exception handler rollback when interrupting the small assembly stub?
+    It goes back to the original exception handler, i.e. the first stage and not the second stage.
   \item \textbf{TODO}: Can we differentiate between zero-step and multi-step by simulating a cache attack?
 \end{itemize}
 
