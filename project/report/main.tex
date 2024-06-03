@@ -160,17 +160,19 @@ CopyCat can recover the key even if the cipher text, output and key are on the s
   \label{fig:sgx-step-pte}
 \end{figure}
 
-The main reason behind the effectiveness of the SGX-Step attack is the assisted
-page-table walk.
-Before resuming the enclave, the SGX-Step attack clears the present bit
-on the pages, which causes a page fault when executing the first instruction.
+To counter SGX-Step and the attack vectors that it enables, AEX-Notify has been proposed.
+The purpose of AEX-Notify is to stop attackers from reliably single-stepping an enclave,
+which mitigates many attacks based on SGX-Step like CopyCat.
+
+Constable et al. \cite{ConstableBCXXAK23} list the root cause behind the effectiveness of SGX-Step as the assisted page-table walk.
+Before resuming the enclave, the SGX-Step attack clears the accessed bit on the pages,
+which causes a page fault when executing the first instruction.
 This induces additional latency in the execution of the instruction, because
 the processor has to walk the page table again.
 Thus, there is a large time frame where the interrupt of the timer could
 arrive and land exactly on the first instruction.
-The goal of AEX-Notify \cite{ConstableBCXXAK23} is to reduce the latency of the
-first instruction and make it impossible to land exactly on the first
-instruction.
+The goal of AEX-Notify is to reduce the latency of the first instruction
+and make it impossible to reliably land on the first instruction.
 
 The first part of AEX-Notify is the hardware extension.
 It introduces a new flag in the SSA frame, called \texttt{AEXNOTIFY}.
