@@ -83,6 +83,13 @@ for detailed observation and analysis.
 
 This section provides a comprehensive review of existing research and frameworks
 relevant to the evaluation of AEX-Notify against SGX single-stepping attackers.
+In particular, we outline the workings of Intel SGX and
+discuss how SGX-Step leverages the APIC timer to single-step enclaves.
+Following this, we examine CopyCat, which leverages SGX-Step to extract
+control-flow information from enclaves, highlighting potential security
+vulnerabilities.
+Finally, we look into the details of AEX-Notify and
+how it prevents the single-stepping capabilities of SGX-Step.
 
 \subsection{Intel SGX}
 
