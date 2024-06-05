@@ -149,7 +149,7 @@ enabling finer control over interrupt timing and reducing time jitter \cite{Arna
 
 \subsection{CopyCat}
 
-CopyCat \cite{MoghimiBHPS20} utilizes the framework
+CopyCat \cite{MoghimiBHPS20} utilizes the SGX-Step framework
 to infer fine-grained control-flow information from SGX enclaves.
 It improves upon traditional page-fault adversaries,
 that can only page accesses at a 4 KiB resolution,
@@ -158,7 +158,7 @@ with the single-stepping capabilities of SGX-Step.
 \begin{figure}[t]
   \centering
   \includegraphics{square-and-multiply.pdf}
-  \caption{Implementation of an exponentiation function using square and multiply.
+  \caption{A typical implementation of the exponentiation function using square and multiply.
     The function calculates $c^d$ where $c$ and $d$ are natural numbers.
     It is important to note that \emph{square} and \emph{multiply} are separate functions
     and may reside on different pages than the exponentiation function.}
