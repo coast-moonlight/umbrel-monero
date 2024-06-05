@@ -147,7 +147,10 @@ with the single-stepping capabilities of SGX-Step.
 \begin{figure}[t]
   \centering
   \includegraphics{square-and-multiply.pdf}
-  \caption{\textbf{TODO}: Add caption.}
+  \caption{Implementation of an exponentiation function using square and multiply.
+    The function calculates $c^d$ where $c$ and $d$ are natural numbers.
+    It is important to note that \emph{square} and \emph{multiply} are separate functions
+    and may reside on different pages than the exponentiation function.}
   \label{fig:square-and-multiply}
 \end{figure}
 
@@ -177,7 +180,10 @@ CopyCat can recover the key even if the cipher text, output and key are on the s
 \begin{figure}[t]
   \centering
   \includegraphics{images/sgx-step-pte.pdf}
-  \caption{\todo[inline]{Add a proper caption here.}}
+  \caption{After resuming execution, the enclave has to lookup the pages for
+    the instruction itself and the \texttt{rdi} operand. This increases the time
+    for the instruction and therefore the likelihood that an interrupts arrives
+    during the execution of that instruction.}
   \label{fig:sgx-step-pte}
 \end{figure}
 
