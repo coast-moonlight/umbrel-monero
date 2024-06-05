@@ -131,6 +131,13 @@ It improves upon traditional page-fault adversaries,
 that can only page accesses at a 4 KiB resolution,
 with the single-stepping capabilities of SGX-Step.
 
+\begin{figure}[t]
+  \centering
+  \includegraphics{square-and-multiply.pdf}
+  \caption{\textbf{TODO}: Add caption.}
+  \label{fig:square-and-multiply}
+\end{figure}
+
 In a typical square-and-multiply implementation,
 we can use page faults to extract the key.
 On each iteration we can induce a fault by clearing the execute permission on
@@ -146,10 +153,6 @@ The first is the access to the cipher text that is squared on each iteration.
 The second is the write to the output whenever the key bit is one.
 By counting the number of instructions between each data access,
 CopyCat can recover the key even if the cipher text, output and key are on the same page.
-\todo{We should include a figure for square-and-multiply. It should be based on
-  RSA as the text is talking about cipher text, keys and output. It should also
-  include a square function and addition function such that is clear that these
-  are separate function on different pages.}
 
 \todo[inline]{Add paragraph explaining why this is a problem in the context of
   the SGX attacker model. Because technically side-channel attacks are not a

@@ -1,0 +1,54 @@
+\documentclass[margin={0 0 39mm 0}]{standalone}
+
+\usepackage{listings}
+\usepackage{amsmath}
+\usepackage{xcolor}
+\setlength{\fboxsep}{-\fboxrule}% Remove \fbox separation for tight bounding box
+\newcommand{\bbox}[1]{%
+  \color{red!50}\rlap{\fbox{$\phantom{#1}$}}%
+  \color{black}#1%
+}
+
+\lstdefinelanguage{pseudocode}{
+  morekeywords={
+    algorithm,
+    if,then,else,while,do,repeat,until,seq,
+    seqdo,return,call,
+    for,pardo,in,foreach,print,output,input,exit,
+    break,loop,end,begin,goto,par,global,local,
+    read,write,to,stop,idle,procedure,function,
+    throw,catch,null
+  },
+  sensitive=true,
+  morecomment=[l]{//},
+  morestring=[b]",
+  literate={<-}{{$\gets$\ }}2,
+}
+
+\lstdefinestyle{pseudocode}{
+  basicstyle=\rmfamily,
+  identifierstyle=\itshape,
+  keywordstyle=\bfseries,
+  columns=fullflexible,
+  numbers=none,
+  escapechar=$,
+  escapebegin=$,
+  escapeend=$,
+}
+
+\lstnewenvironment{Pseudocode}{\lstset{style=pseudocode,language=pseudocode}}{}
+
+\begin{document}
+
+\begin{Pseudocode}[frame=single]
+function $\text{decrypt}(c, d, N)$
+  $m \gets c$
+  for $i$ in $1 ..{<} \log N$ do
+    $m \gets square(m)$
+    if $d[i] = 1$ then
+      $m \gets multiply(m, c)$
+  return $m$
+end
+\end{Pseudocode}
+
+\end{document}
