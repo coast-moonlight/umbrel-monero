@@ -261,6 +261,8 @@ including configuration details necessary for conducting the evaluation.
 
 \subsection{Initializing SGX-Step}
 
+\todo[inline]{Explain kernel module, \texttt{/dev/sgx-step}, etc.}
+
 SGX-Step requires careful configuration of the APIC timer
 since it is crucial for the attack to work.
 If the value is too small, then we will zero-step and execute the same instruction multiple times.
@@ -271,41 +273,28 @@ reports the instruction pointer after each interrupt using the \texttt{EDBRD}.
 If the instruction pointer is incremented by one instruction each interrupt,
 then we can be sure that we are single-stepping the enclave.
 
-Usually the reported addresses are enough to configure the timer
-since each address is incremented by one when the timer is configured correctly.
-Thus, we know that the timer is configured incorrectly if the addresses stay
-the same or vary too much.
-The problem with AEX-Notify is that interrupting the enclave not only
-interrupts the enclave but also the exception handler.
-Thus, the application will also report addresses from the exception handler.
-We have written a simple tool that uses the debug information from the binary and
-automatically translates these addresses to their source code location in the trusted runtime system.
-
 \subsection{Implementation Details for Applying AEX-Notify}
 
-Explain how AEX-Notify is integrated into the experimental setup
-
-\textbf{Integration with Experimental Setup:}
-\begin{itemize}
-  \item
-    Integrate AEX-Notify into existing SGX environment
-    by modifying enclave code to enable AEX-Notify functionality.
-    Ensure compatibility with enclave execution flow and security requirements.
-\end{itemize}
-
-\textbf{Configuration and Setup Details:}
-\begin{itemize}
-  \item Enable AEX-Notify within the SGX enclave environment
-    by setting appropriate flags or parameters during enclave initialization.
-    Configure AEX-Notify to intercept and handle exceptions caused by single-stepping attacks.
-\end{itemize}
-
-We enable AEX-Notify by simply adding an additional field in the enclave configuration file.
+After configuring SGX-Step and successfully single-stepping the enclave, we enabled AEX-Notify on the example.
+We can enable AEX-Notify by simply adding an additional field in the enclave configuration file.
 Enabling this flag requires registering an exception handler for any enclave exit that occurs.
 However, the exception handler is preconfigured to use the provided handler
 from the trusted runtime system of the Intel SGX SDK.
 This is the exact same exception handler as described in Section~\ref{sec:aex-notify},
 which decodes the enclave return point and prefetches the necessary code and data pages.
+
+After enabling AEX-Notify, we were particularly interested in the reported addresses from the benchmark application.
+Usually, we can use these addresses to configure the timer
+since each address is incremented by one when the timer is configured correctly.
+The problem with AEX-Notify is that interrupting the enclave not only
+interrupts the enclave but it can also interrupt the exception handler.
+In this case, the application will additionally report addresses from the exception handler.
+For these addresses, it is not entirely clear where exactly there are from.
+Therefore, we have written a simple tool that uses the debug information from the binary and
+automatically translates these addresses to their source code location in the trusted runtime system.
+
+\todo[inline]{Explain the method used to determine where the exception handler
+goes when the exception handler is interrupted and also why it's important.}
 
 \iffalse % NOTE: Disables this subsection
   \subsection{Single-stepping Attack Implementation}
