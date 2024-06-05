@@ -41,9 +41,9 @@
 \begin{document}
 
 \begin{Pseudocode}[frame=single]
-function $\text{decrypt}(c, d, N)$
+function $\text{decrypt}(c, d)$
   $m \gets c$
-  for $i$ in $1 ..{<} \log N$ do
+  for $i$ in $1 ..{<} \log d$ do
     $m \gets square(m)$
     if $d[i] = 1$ then
       $m \gets multiply(m, c)$
