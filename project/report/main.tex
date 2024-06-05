@@ -242,9 +242,19 @@ If the value is too small, then we will zero-step and execute the same instructi
 If the value is too large, then we will multi-step and execute multiple instruction.
 We have used an example application provided in the SGX-Step repository for this purpose.
 This example consists only of a series of \texttt{nop} instructions and
-reports the instruction pointer after each interrupt.
+reports the instruction pointer after each interrupt using the \texttt{EDBRD}.
 If the instruction pointer is incremented by one instruction each interrupt,
 then we can be sure that we are single-stepping the enclave.
+
+Usually the reported addresses are enough to configure the timer
+since each address is incremented by one when the timer is configured correctly.
+Thus, we know that the timer is configured incorrectly if the addresses stay
+the same or vary too much.
+The problem with AEX-Notify is that interrupting the enclave not only
+interrupts the enclave but also the exception handler.
+Thus, the application will also report addresses from the exception handler.
+We have written a simple tool that uses the debug information from the binary and
+automatically translates these addresses to their source code location in the trusted runtime system.
 
 \subsection{Single-stepping Attack Implementation}
 
