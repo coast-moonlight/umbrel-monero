@@ -334,14 +334,25 @@ we could only see addresses that were in the exception handler.
 This means that each interrupt always arrives too soon and
 lands in the exception handler instead of the enclave itself.
 
+We were able to observe different behavior depending on the number of
+\texttt{nop} instructions that the enclave executed.
+If the number of instructions do not fit on a single page,
+then the most of the addresses would end up during the C3 cache.
+
+We were able to verify that the exception handler is always rolled back to the first phase of the exception handler
+even if the handler itself is interrupted.
+By inserting a page-fault after the assembly stub re-enables AEX-Notify,
+we were able to detect that the exception handler is reset completely,
+i.e. it starts from the first phase.
+
 \begin{itemize}
-  \item For pages without any return, the interrupt arrives during the C3 cache lookup.
   \item Where does the exception handler rollback when interrupting the small assembly stub?
     It goes back to the original exception handler, i.e. the first stage and not the second stage.
   \item \textbf{TODO}: Can we differentiate between zero-step and multi-step by simulating a cache attack?
 \end{itemize}
 
 \section{Conclusion and Future Work}
+
 \begin{itemize}
     \item Summary of key findings
     \item Potential enhancements to AEX-Notify
