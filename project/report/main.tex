@@ -320,9 +320,12 @@ Explain how AEX-Notify is integrated into the experimental setup
     Configure AEX-Notify to intercept and handle exceptions caused by single-stepping attacks.
 \end{itemize}
 
-We enable AEX-Notify by adding an additional field in the enclave configuration.
-The exception handler is preconfigured to use the trusted runtime system of the SDK.
-This is the same handler as described in Section~\ref{sec:aex-notify}.
+We enable AEX-Notify by simply adding an additional field in the enclave configuration file.
+Enabling this flag requires registering an exception handler for any enclave exit that occurs.
+However, the exception handler is preconfigured to use the provided handler
+from the trusted runtime system of the Intel SGX SDK.
+This is the exact same exception handler as described in Section~\ref{sec:aex-notify},
+which decodes the enclave return point and prefetches the necessary code and data pages.
 
 \section{Results}
 
