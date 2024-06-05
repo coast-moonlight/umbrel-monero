@@ -26,12 +26,16 @@
   offer a promising avenue for securing applications by executing them within secure enclaves.
   However, recent advancements in side-channel attack techniques, such as SGX-Step,
   pose significant threats to the security guarantees provided by SGX.
-  SGX-Step facilitates single-stepping enclaves,
+  SGX-Step uses the APIC timer to precisely interrupt the enclave after each instruction,
+  effectively stepping through the execution one instruction at a time.
+  These single-stepping capabilities allow much greater granularity for side-channel,
   thereby enhancing the feasibility of side-channel attacks.
   In response to this threat, AEX-Notify has been proposed as a potential mitigation against SGX-Step.
-  This paper analyzes the security of AEX-Notify and evaluates its effectiveness against single-stepping.
+  AEX-Notify is both a hardware extension and a software mitigation that tries
+  to prevent adversaries from single-stepping enclaves.
+  This paper analyzes the security of AEX-Notify and evaluates its
+  effectiveness against deterministic single-stepping.
 \end{abstract}
-
 
 \section{Motivation}
 
