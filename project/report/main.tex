@@ -236,52 +236,6 @@ it is unlikely that an interrupt would arrive exactly on the first instruction.
 
 The goal of this project is to analyze the effectiveness of AEX-Notify.
 
-\subsection{Initializing SGX-Step}
-
-SGX-Step requires careful configuration of the APIC timer
-since it is crucial for the attack to work.
-If the value is too small, then we will zero-step and execute the same instruction multiple times.
-If the value is too large, then we will multi-step and execute multiple instruction.
-We have used an example application provided in the SGX-Step repository for this purpose.
-This example consists only of a series of \texttt{nop} instructions and
-reports the instruction pointer after each interrupt using the \texttt{EDBRD}.
-If the instruction pointer is incremented by one instruction each interrupt,
-then we can be sure that we are single-stepping the enclave.
-
-Usually the reported addresses are enough to configure the timer
-since each address is incremented by one when the timer is configured correctly.
-Thus, we know that the timer is configured incorrectly if the addresses stay
-the same or vary too much.
-The problem with AEX-Notify is that interrupting the enclave not only
-interrupts the enclave but also the exception handler.
-Thus, the application will also report addresses from the exception handler.
-We have written a simple tool that uses the debug information from the binary and
-automatically translates these addresses to their source code location in the trusted runtime system.
-
-\iffalse % NOTE: Disables this subsection
-  \subsection{Single-stepping Attack Implementation}
-
-  The single-stepping attack, also known as the Zigzagger attack,
-  aims to exploit vulnerabilities in SGX enclaves
-  by interrupting enclave execution at precise intervals.
-  This section provides a detailed overview of the Zigzagger attack methods and a step-by-step implementation guide.
-
-  \textbf{Introduction to Zigzagger Attack Methods:}
-  The Zigzagger attack utilizes techniques to interrupt SGX enclave execution at the instruction level,
-  thereby enabling the extraction of control-flow information.
-  It involves precise timing to resume execution either before or after specific instructions,
-  allowing an attacker to gather sensitive information.
-
-  \textbf{Step-by-step Implementation Guide:}
-  \begin{enumerate}
-    \item \textbf{Identifying Target Enclaves:} The first step involves selecting target SGX enclaves susceptible to single-stepping attacks.
-    \item \textbf{Setting Interrupt Intervals:} Determine the optimal timing intervals for interrupting enclave execution to capture control-flow information effectively.
-    \item \textbf{Implementing Interruption Mechanism:} Develop the mechanism to interrupt enclave execution using techniques such as APIC timers.
-    \item \textbf{Fine-tuning Timing:} Adjust timing parameters to ensure the interruption occurs at critical points during enclave execution.
-    \item \textbf{Testing and Validation:} Validate the implementation by running test scenarios to verify the effectiveness of the single-stepping attack in extracting control-flow information.
-  \end{enumerate}
-\fi
-
 \subsection{Experimental Setup}
 
 Since AEX-Notify consists of a hardware and software part,
@@ -304,6 +258,28 @@ including configuration details necessary for conducting the evaluation.
     Set up the environment to execute the single-stepping attack.
     Select target enclaves and configure attack parameters for testing.
 \end{itemize}
+
+\subsection{Initializing SGX-Step}
+
+SGX-Step requires careful configuration of the APIC timer
+since it is crucial for the attack to work.
+If the value is too small, then we will zero-step and execute the same instruction multiple times.
+If the value is too large, then we will multi-step and execute multiple instruction.
+We have used an example application provided in the SGX-Step repository for this purpose.
+This example consists only of a series of \texttt{nop} instructions and
+reports the instruction pointer after each interrupt using the \texttt{EDBRD}.
+If the instruction pointer is incremented by one instruction each interrupt,
+then we can be sure that we are single-stepping the enclave.
+
+Usually the reported addresses are enough to configure the timer
+since each address is incremented by one when the timer is configured correctly.
+Thus, we know that the timer is configured incorrectly if the addresses stay
+the same or vary too much.
+The problem with AEX-Notify is that interrupting the enclave not only
+interrupts the enclave but also the exception handler.
+Thus, the application will also report addresses from the exception handler.
+We have written a simple tool that uses the debug information from the binary and
+automatically translates these addresses to their source code location in the trusted runtime system.
 
 \subsection{Implementation Details for Applying AEX-Notify}
 
@@ -330,6 +306,30 @@ However, the exception handler is preconfigured to use the provided handler
 from the trusted runtime system of the Intel SGX SDK.
 This is the exact same exception handler as described in Section~\ref{sec:aex-notify},
 which decodes the enclave return point and prefetches the necessary code and data pages.
+
+\iffalse % NOTE: Disables this subsection
+  \subsection{Single-stepping Attack Implementation}
+
+  The single-stepping attack, also known as the Zigzagger attack,
+  aims to exploit vulnerabilities in SGX enclaves
+  by interrupting enclave execution at precise intervals.
+  This section provides a detailed overview of the Zigzagger attack methods and a step-by-step implementation guide.
+
+  \textbf{Introduction to Zigzagger Attack Methods:}
+  The Zigzagger attack utilizes techniques to interrupt SGX enclave execution at the instruction level,
+  thereby enabling the extraction of control-flow information.
+  It involves precise timing to resume execution either before or after specific instructions,
+  allowing an attacker to gather sensitive information.
+
+  \textbf{Step-by-step Implementation Guide:}
+  \begin{enumerate}
+    \item \textbf{Identifying Target Enclaves:} The first step involves selecting target SGX enclaves susceptible to single-stepping attacks.
+    \item \textbf{Setting Interrupt Intervals:} Determine the optimal timing intervals for interrupting enclave execution to capture control-flow information effectively.
+    \item \textbf{Implementing Interruption Mechanism:} Develop the mechanism to interrupt enclave execution using techniques such as APIC timers.
+    \item \textbf{Fine-tuning Timing:} Adjust timing parameters to ensure the interruption occurs at critical points during enclave execution.
+    \item \textbf{Testing and Validation:} Validate the implementation by running test scenarios to verify the effectiveness of the single-stepping attack in extracting control-flow information.
+  \end{enumerate}
+\fi
 
 \section{Results}
 
