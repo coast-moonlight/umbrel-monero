@@ -132,6 +132,17 @@ making it difficult to precisely control the timing of interrupts.
 SGX-Step overcomes these challenges by configuring the APIC timer in user space,
 enabling finer control over interrupt timing and reducing time jitter \cite{ArnautovTGKMPLM16}.
 
+\begin{figure}[t]
+  \centering
+  \includegraphics{images/sgx-step-pte.pdf}
+  \caption{Overview of the SGX-Step attack.
+    After resuming execution, the enclave has to lookup the pages for
+    the instruction itself and the \texttt{rdi} operand. This increases the time
+    for the instruction and therefore the likelihood that an interrupts arrives
+    during the execution of that instruction.}
+  \label{fig:sgx-step-pte}
+\end{figure}
+
 \todo[inline]{Add paragraph for monitoring page table entries and how SGX-Step
   uses it to start single-stepping once a specific page has been executed.}
 \todo[inline]{Explain why SGX-Step is important $\to$ It enables side-channel attacks at instruction-level granularity}
@@ -176,16 +187,6 @@ CopyCat can recover the key even if the cipher text, output and key are on the s
 
 \subsection{AEX-Notify}
 \label{sec:aex-notify}
-
-\begin{figure}[t]
-  \centering
-  \includegraphics{images/sgx-step-pte.pdf}
-  \caption{After resuming execution, the enclave has to lookup the pages for
-    the instruction itself and the \texttt{rdi} operand. This increases the time
-    for the instruction and therefore the likelihood that an interrupts arrives
-    during the execution of that instruction.}
-  \label{fig:sgx-step-pte}
-\end{figure}
 
 To counter SGX-Step and the attack vectors that it enables, AEX-Notify has been proposed.
 The purpose of AEX-Notify is to stop attackers from reliably single-stepping an enclave,
