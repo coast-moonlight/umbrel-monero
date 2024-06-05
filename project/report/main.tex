@@ -313,6 +313,18 @@ This is the same handler as described in Section~\ref{sec:aex-notify}.
 
 \section{Results}
 
+As the most basic requirement,
+we were no longer able to single-step the enclave after enabling AEX-Notify.
+Using a page-fault, we could always reliably interrupt the application
+before executing the first instruction of the target code.
+However, it was not possible to reliably execute one or even multiple instructions after the first.
+
+The application reports the instruction pointer of the enclave
+and after reporting the first instruction of our target code correctly,
+we could only see addresses that were in the exception handler.
+This means that each interrupt always arrives too soon and
+lands in the exception handler instead of the enclave itself.
+
 \begin{itemize}
   \item After enabling AEX-Notify, we can no longer single-step (This is the most basic requirement, so not really special)
   \item The interrupt lands in the exception handler most of the time
