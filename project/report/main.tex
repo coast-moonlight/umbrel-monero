@@ -346,8 +346,6 @@ This means that each interrupt always arrives too soon and
 lands in the exception handler instead of the enclave itself.
 
 \begin{itemize}
-  \item After enabling AEX-Notify, we can no longer single-step (This is the most basic requirement, so not really special)
-  \item The interrupt lands in the exception handler most of the time
   \item For pages without any return, the interrupt arrives during the C3 cache lookup.
   \item Where does the exception handler rollback when interrupting the small assembly stub?
     It goes back to the original exception handler, i.e. the first stage and not the second stage.
