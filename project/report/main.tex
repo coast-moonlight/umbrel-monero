@@ -132,6 +132,8 @@ making it difficult to precisely control the timing of interrupts.
 SGX-Step overcomes these challenges by configuring the APIC timer in user space,
 enabling finer control over interrupt timing and reducing time jitter \cite{ArnautovTGKMPLM16}.
 
+\todo[inline]{Add paragraph for monitoring page table entries and how SGX-Step
+  uses it to start single-stepping once a specific page has been executed.}
 \todo[inline]{Explain why SGX-Step is important $\to$ It enables side-channel attacks at instruction-level granularity}
 
 \subsection{CopyCat}
