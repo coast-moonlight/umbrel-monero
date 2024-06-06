@@ -85,7 +85,8 @@ vulnerabilities.
 Finally, we look into the details of AEX-Notify and
 how it prevents the single-stepping capabilities of SGX-Step.
 
-/section{Intel SGX}
+\section{Intel SGX}
+
 The security feature that allows for the construction of safe enclaves within applications is introduced by Intel Software Guard Extensions (SGX) \cite{CostanD16}. Sensitive code and data are placed in protected execution environments known as enclaves, which guarantee confidentiality and integrity even in the event that the host system is compromised.
 
 The strong memory management system of SGX is one of its core features. In order to effectively prevent unwanted access to enclave data, SGX imposes rigorous memory segregation between enclaves and non-enclave programs.
