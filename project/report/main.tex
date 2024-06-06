@@ -169,28 +169,36 @@ the ``accessed'' and ``dirty'' properties to reveal information about
 when a specific function is called,
 an attacker can target specific areas they want to single-step through.
 
-All things considered, side-channel attacks are made far more likely by
-SGX-Step's accurate interrupt control and PTE monitoring,
-which give adversaries access to critical information at the instruction level
-as well as comprehensive control flow information \cite{BulckPS17}.
+The dangers of SGX-Step lie in its ability to amplify side-channel attacks.
+By repeatedly interrupting the enclave after each instruction,
+the attacker can gain information about a side-channel at maximal temporal resolution.
+This has already been applied to various attack vectors,
+like extracting memory access patterns through the cache side channel \cite{HahnelCP17}.
 
-Enabling side-channel attacks depends on SGX-Step's ability to precisely halt
-enclave execution.
-Attackers can learn about the control flow and data usage patterns inside the
-enclave by looking at the execution flow at such a fine level.
-This thorough observation emphasizes the necessity of strong defenses against
-such assaults by showing how vulnerabilities can be exploited and sensitive
-data extracted.
+\iffalse
+  All things considered, side-channel attacks are made far more likely by
+  SGX-Step's accurate interrupt control and PTE monitoring,
+  which give adversaries access to critical information at the instruction level
+  as well as comprehensive control flow information \cite{BulckPS17}.
 
-The importance of SGX-Step is seen in its potential to facilitate side-channel
-attacks within Intel SGX enclaves at the instruction level.
-Using the APIC timer to generate precise interrupts, SGX-Step makes it possible
-to observe enclave execution in detail.
-Attackers can now more accurately detect vulnerabilities, take advantage of
-timing side-channels, and extract sensitive data.
-By giving attackers precise control over enclave execution, SGX-Step
-essentially increases the attack surface and is a potent weapon for breaking
-into SGX-protected apps.
+  Enabling side-channel attacks depends on SGX-Step's ability to precisely halt
+  enclave execution.
+  Attackers can learn about the control flow and data usage patterns inside the
+  enclave by looking at the execution flow at such a fine level.
+  This thorough observation emphasizes the necessity of strong defenses against
+  such assaults by showing how vulnerabilities can be exploited and sensitive
+  data extracted.
+
+  The importance of SGX-Step is seen in its potential to facilitate side-channel
+  attacks within Intel SGX enclaves at the instruction level.
+  Using the APIC timer to generate precise interrupts, SGX-Step makes it possible
+  to observe enclave execution in detail.
+  Attackers can now more accurately detect vulnerabilities, take advantage of
+  timing side-channels, and extract sensitive data.
+  By giving attackers precise control over enclave execution, SGX-Step
+  essentially increases the attack surface and is a potent weapon for breaking
+  into SGX-protected apps.
+\fi
 
 \subsection{CopyCat}
 
