@@ -65,19 +65,13 @@ A notification mechanism for AEX events is added by AEX-Notify. In order to stop
 
 The primary advantage of AEX-Notify is its capacity to improve enclave security by the detection of AEX events, which interferes with the timing required for attacks. By enabling enclaves to confirm their current state upon restart and apply adaptive security measures, it contributes to the maintenance of execution integrity by boosting resilience against a variety of interruption-based threats \cite{ConstableBCXXAK23}.
 
-\paragraph{Research Question and Objectives}
-\begin{itemize}
-  \item Formulation of the \textbf{research question}:
-    Is it possible to gather control-flow information of victim programs running
-    in SGX enclaves when the victim protects the execution of the enclave with
-    AEX-Notify?
-  \item \textbf{Project goals}:
-    Our goal is to evaluate the effectiveness of AEX-Notify against SGX-step by
-    constructing an example program where the SGX-Step attack works and testing
-    this program once with AEX-Notify enabled and once without. We will compare
-    the results to see how much information we can gain about control-flow
-    information with and without AEX-Notify enabled.
-\end{itemize}
+This paper attempts to evaluate the effectiveness of SGX-Step against single-stepping.
+Specifically, we have tested AEX-Notify on an attacker implementation
+and have compared the ability to single-step with and without AEX-Notify enabled.
+We have used the results from our tests to analyze AEX-Notify and
+find potential weak points in its implementation.
+Additionally, we have tested these weak points to see if an attack against AEX-Notify is feasible
+or whether AEX-Notify is secure against single-stepping.
 
 \section{Background}
 
