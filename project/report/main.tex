@@ -326,15 +326,20 @@ goes when the exception handler is interrupted and also why it's important.}
 
 As the most basic requirement,
 we were no longer able to single-step the enclave after enabling AEX-Notify.
-Using a page-fault, we could always reliably interrupt the application
-before executing the first instruction of the target code.
+We were always able to reliably interrupt the application
+before executing the first instruction of the target code
+by using a page-fault on the code page.
 However, it was not possible to reliably execute one or even multiple instructions after the first.
 
-The application reports the instruction pointer of the enclave
-and after reporting the first instruction of our target code correctly,
-we could only see addresses that were in the exception handler.
-This means that each interrupt always arrives too soon and
-lands in the exception handler instead of the enclave itself.
+The reason was that we were no longer just interrupting the enclave but also the exception handler of AEX-Notify.
+Since the application reports the instruction pointer of the enclave,
+we could see that the addresses no longer correspond to only our target.
+Instead, most of these addresses pointed to the exception handler.
+Between the addresses of the exception handler,
+sometimes the program would report addresses from our target.
+However, the addresses always jumped at least several instructions from the previous
+and we were never able to reliably cause a controlled multi-step
+by only configuring the APIC timer.
 
 We were able to observe different behavior depending on the number of
 \texttt{nop} instructions that the enclave executed.
@@ -346,12 +351,6 @@ even if the handler itself is interrupted.
 By inserting a page-fault after the assembly stub re-enables AEX-Notify,
 we were able to detect that the exception handler is reset completely,
 i.e. it starts from the first phase.
-
-\begin{itemize}
-  \item Where does the exception handler rollback when interrupting the small assembly stub?
-    It goes back to the original exception handler, i.e. the first stage and not the second stage.
-  \item \textbf{TODO}: Can we differentiate between zero-step and multi-step by simulating a cache attack?
-\end{itemize}
 
 \section{Conclusion and Future Work}
 
