@@ -297,8 +297,21 @@ For these addresses, it is not entirely clear where exactly there are from.
 Therefore, we have written a simple tool that uses the debug information from the binary and
 automatically translates these addresses to their source code location in the trusted runtime system.
 
-\todo[inline]{Explain the method used to determine where the exception handler
-goes when the exception handler is interrupted and also why it's important.}
+\todo[inline]{Explain how we analyzed AEX-Notify, i.e. comparing the source with the reported addresses.}
+
+The analysis has lead us to one important question regarding the exception handler:
+whether interrupting the exception handler during the second stage would
+restart the entire exception handler again or only restart the second stage.
+If an interrupt during the second stage would only restart the second stage,
+then we could effectively differentiate between a zero and a multi-step.
+
+We have analyzed this potential weak point by modifying the second stage to cause an interrupt.
+This involved adding one additional instruction in the second stage.
+This instruction would access a page that the enclave has no read permission for.
+Hence, a page fault occurs and the enclave is interrupted during the second stage.
+The last step is recognizing where this interrupt is handled.
+To achieve this, we induce another page fault on the first stage of the exception handler
+and we check whether another page fault occurs immediately after the first.
 
 \iffalse % NOTE: Disables this subsection
   \subsection{Single-stepping Attack Implementation}
