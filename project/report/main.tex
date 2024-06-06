@@ -340,16 +340,12 @@ The reason was that we were no longer just interrupting the enclave but also the
 Since the application reports the instruction pointer of the enclave,
 we could see that the addresses no longer correspond to only our target.
 Instead, most of these addresses pointed to the exception handler.
-Between the addresses of the exception handler,
-sometimes the program would report addresses from our target.
+Between these addresses, sometimes the program would report addresses from our target.
 However, the addresses always jumped at least several instructions from the previous
-and we were never able to reliably cause a controlled multi-step
+and we were never able to reliably cause a controlled multi-step attack
 by only configuring the APIC timer.
 
-We were able to observe different behavior depending on the number of
-\texttt{nop} instructions that the enclave executed.
-If the number of instructions do not fit on a single page,
-then the most of the addresses would end up during the C3 cache.
+% TODO: Report about C3 Cache
 
 \paragraph{Interrupting the Exception Handler.}
 We were able to verify that the exception handler is always rolled back to the first phase of the exception handler
