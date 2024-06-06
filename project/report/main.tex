@@ -207,7 +207,10 @@ by utilizing SGX-Step to infer fine-grained control-flow information from SGX en
 It improves upon traditional page-fault adversaries,
 that can only page accesses at a 4 KiB resolution,
 and uses single-stepping to capture control flow at a maximum temporal resolution.
+CopyCat has even been used to defeat a compiler hardening technique \cite{HosseinzadehLLP18} that was
+suppose to withstand the SGX-Step attack.
 
+We explain how CopyCat works using the example of square-and-multiply.
 In a typical square-and-multiply implementation,
 we can use page faults to extract the key.
 On each iteration we can induce a fault by clearing the execute permission on
@@ -314,15 +317,15 @@ privileged access to the hardware and software stack to launch attacks against S
 
 \subsection{Initializing SGX-Step}
 
-%\todo[inline]{Explain kernel module, \texttt{/dev/sgx-step}, etc.}
+%\todo[inline]{Explain kernel module, \textsc{/dev/sgx-step}, etc.}
 
 SGX-Step requires careful configuration of the APIC timer
 since it is crucial for the attack to work.
 If the value is too small, then we will zero-step and execute the same instruction multiple times.
 If the value is too large, then we will multi-step and execute multiple instructions.
 We have used the benchmark application provided in the SGX-Step repository for this purpose.
-The program consists only of a series of \texttt{nop} instructions and
-reports the instruction pointer after each interrupt using the \texttt{EDBGRD} instruction.
+The program consists only of a series of \textsc{nop} instructions and
+reports the instruction pointer after each interrupt using the \textsc{edbgrd} instruction.
 If the instruction pointer is incremented by one instruction each interrupt,
 then we can be sure that we are single-stepping and
 that we have configured SGX-Step correctly.
