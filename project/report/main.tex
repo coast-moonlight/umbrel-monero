@@ -238,28 +238,30 @@ we aimed to provide an informed assessment of AEX-Notify’s defensive capabilit
 This analysis informs us about potential attack vectors to try,
 offering insights into areas that may require further study.
 
-\subsection{Experimental Setup}
+\iffalse
+  \subsection{Experimental Setup}
 
-Since AEX-Notify consists of a hardware and software part,
-we need a system that specifically supports the hardware extension.
-This section outlines the hardware and software specifications of the experimental environment,
-including configuration details necessary for conducting the evaluation.
+  Since AEX-Notify consists of a hardware and software part,
+  we need a system that specifically supports the hardware extension.
+  This section outlines the hardware and software specifications of the experimental environment,
+  including configuration details necessary for conducting the evaluation.
 
-\textbf{Hardware and Software Specifications:}
-\begin{itemize}
-  \item Intel Core i7 10th Gen, 16GB DDR4 RAM, and SSD storage.
-  \item Ubuntu 20.04 LTS (Linux kernel version 5.10) with SGX driver support. Use SGX SDK for enclave development.
-\end{itemize}
+  \textbf{Hardware and Software Specifications:}
+  \begin{itemize}
+    \item Intel Core i7 10th Gen, 16GB DDR4 RAM, and SSD storage.
+    \item Ubuntu 20.04 LTS (Linux kernel version 5.10) with SGX driver support. Use SGX SDK for enclave development.
+  \end{itemize}
 
-\textbf{Configuration Details:}
-\begin{itemize}
-  \item
-    Configure SGX environment with appropriate BIOS settings and SGX driver installation.
-    Utilize SGX SDK for enclave development.
-  \item
-    Set up the environment to execute the single-stepping attack.
-    Select target enclaves and configure attack parameters for testing.
-\end{itemize}
+  \textbf{Configuration Details:}
+  \begin{itemize}
+    \item
+      Configure SGX environment with appropriate BIOS settings and SGX driver installation.
+      Utilize SGX SDK for enclave development.
+    \item
+      Set up the environment to execute the single-stepping attack.
+      Select target enclaves and configure attack parameters for testing.
+  \end{itemize}
+\fi
 
 \subsection{Initializing SGX-Step}
 
