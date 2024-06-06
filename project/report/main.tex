@@ -104,15 +104,11 @@ In addition, SGX instructions such as EENTER and EEXIT help to maintain the inte
 
 It is important to note that SGX does not by itself offer protection against side-channel attacks, even if its primary goal is to safeguard the integrity and confidentiality of enclave data and code. It is the duty of developers to incorporate extra precautions to lessen these dangers in their enclave implementations \cite{CostanD16}.
 \subsection{SGX-Step}
+SGX-Step \cite{BulckPS17} is a framework that enhances the ability to monitor SGX enclave execution at the instruction level, addressing vulnerabilities by enabling precise and detailed observation. It uses the APIC timer to interrupt enclave execution at specific intervals, overcoming previous challenges related to time jitter by configuring the timer in user space for finer control and reduced jitter \cite{ArnautovTGKMPLM16}.
 
-SGX-Step \cite{BulckPS17} is a framework designed to address vulnerabilities in SGX
-by enabling precise monitoring of enclave execution at the instruction level.
-It utilizes the APIC timer to interrupt enclave execution at specific intervals,
-allowing for detailed observation and analysis.
-Previous methods for interrupting enclave execution often resulted in large time jitter,
-making it difficult to precisely control the timing of interrupts.
-SGX-Step overcomes these challenges by configuring the APIC timer in user space,
-enabling finer control over interrupt timing and reducing time jitter \cite{ArnautovTGKMPLM16}.
+The monitoring of Page Table Entries (PTEs) is one of SGX-Step's primary features. Even if single-stepping enclave execution is quite sluggish, it can be used for certain functions alone. Single-stepping can begin using SGX-Step once a specific code or data page is accessed. It configures mappings between user space virtual memory and the physical memory that houses the PTEs in the enclave. Using the "present" bit to cause page faults or the "accessed" and "dirty" properties to reveal information about how much memory is being used in the enclave, an attacker can manipulate these PTEs.
+
+All things considered, side-channel attacks are made far more likely by SGX-Step's accurate interrupt control and PTE monitoring, which give adversaries access to critical information at the instruction level as well as comprehensive control flow information.
 
 \begin{figure}[t]
   \centering
