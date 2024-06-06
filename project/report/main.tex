@@ -172,9 +172,9 @@ while we will have only two accesses if the key bit is zero.
 Therefore, by counting the number of instructions in each iteration,
 CopyCat can recover the key even if the cipher text, output and key are on the same page.
 
-\todo[inline]{Add paragraph explaining why this is a problem in the context of
-  the SGX attacker model. Because technically side-channel attacks are not a
-  concern for SGX, but they still implemented AEX-Notify.}
+%\todo[inline]{Add paragraph explaining why this is a problem in the context of
+%  the SGX attacker model. Because technically side-channel attacks are not a
+%  concern for SGX, but they still implemented AEX-Notify.}
 
 \subsection{AEX-Notify}
 \label{sec:aex-notify}
@@ -258,9 +258,20 @@ offering insights into areas that may require further study.
   \end{itemize}
 \fi
 
+\subsection{Attacker Model}
+
+In this project, we assume the standard Intel SGX privileged attacker model.
+This means that the attacker has full control over the operating system
+and can control important system functions.
+For example, the attacker may modify the page-table to learn about memory accesses
+or they may configure the APIC timer to interrupt the enclave, like SGX-Step.
+This model is particularly relevant in scenarios such as cloud computing
+environments, where cloud service providers could potentially exploit their
+privileged access to the hardware and software stack to launch attacks against SGX enclaves.
+
 \subsection{Initializing SGX-Step}
 
-\todo[inline]{Explain kernel module, \texttt{/dev/sgx-step}, etc.}
+%\todo[inline]{Explain kernel module, \texttt{/dev/sgx-step}, etc.}
 
 SGX-Step requires careful configuration of the APIC timer
 since it is crucial for the attack to work.
