@@ -175,10 +175,17 @@ Traditional page-fault adversaries fail at recovering the key when the entire
 square-and-multiply procedure fits on a single page.
 CopyCat overcomes this challenge by single-stepping the enclave and counting the
 number of instructions until a data page was accessed.
-In the example of square-and-multiply, there are two data accesses of interest.
-The first is the access to the cipher text that is squared on each iteration.
-The second is the write to the output whenever the key bit is one.
-By counting the number of instructions between each data access,
+By comparing the data access pattern with the function, CopyCat is able to recover the key
+even if all used functions fit on a single page.
+
+Figure~\ref{fig:square-and-multiply} illustrates the square-and-multiply example.
+There are two data accesses of interest.
+The first is the access to the output message $m$ that is squared on each iteration.
+The second is the access to the cipher text when we multiply $m$ by $c$.
+This data access only happens when the key bit $d[i]$ equals one.
+Hence, we will have three data accesses to $c$, $m$ and $d$ in one iteration,
+while we will have only two accesses if the key bit is zero.
+Therefore, by counting the number of instructions in each iteration,
 CopyCat can recover the key even if the cipher text, output and key are on the same page.
 
 \todo[inline]{Add paragraph explaining why this is a problem in the context of
