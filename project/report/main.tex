@@ -337,8 +337,9 @@ As the most basic requirement,
 we were no longer able to single-step the enclave after enabling AEX-Notify.
 We were always able to reliably interrupt the application
 before executing the first instruction of the target code
-by using a page-fault on the code page.
-However, it was not possible to reliably execute one or even multiple instructions after the first.
+by using the additional page-fault side channel provided by SGX-Step.
+However, we were unable to reliably execute one or
+even multiple instructions after executing the first.
 
 The reason was that we were no longer just interrupting the enclave but also the exception handler of AEX-Notify.
 Since the application reports the instruction pointer of the enclave,
