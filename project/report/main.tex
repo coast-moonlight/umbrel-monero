@@ -285,6 +285,8 @@ from the trusted runtime system of the Intel SGX SDK.
 This is the exact same exception handler as described in Section~\ref{sec:aex-notify},
 which decodes the enclave return point and prefetches the necessary code and data pages.
 
+\subsection{Analyzing AEX-Notify}
+
 After enabling AEX-Notify, we were particularly interested in the reported addresses from the benchmark application.
 Usually, we can use these addresses to configure the timer
 since each address is incremented by one when the timer is configured correctly.
