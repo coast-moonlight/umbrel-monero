@@ -218,24 +218,25 @@ The second part of AEX-Notify is the custom exception handler that is implemente
 The exception handler is split into two stages.
 The first stage is responsible for decoding the first instruction and
 computing the accessed pages of that instruction.
-It is run with AEX-Notify disabled.
+It is run with \texttt{AEXNOTIFY} disabled.
 The second stage is responsible for prefetching the addresses from the first stage.
 It is further split into two parts.
-The first part runs with AEX-Notify disabled
-and the second, smaller assembly stub runs with AEX-Notify enabled.
+The first part runs with \texttt{AEXNOTIFY} disabled
+and the second, smaller assembly stub runs with \texttt{AEXNOTIFY} enabled.
 AEX-Notify is disabled at first to ensure that the exception handler always makes forward progress.
 
 \section{Work Description}
 
 Our main goal is to analyze the effectiveness of AEX-Notify
 in preventing attackers from reliably single-stepping SGX enclaves.
-To evaluate the success of AEX-Notify in achieving this,
+To evaluate the success of AEX-Notify,
 we conducted an analysis aimed at identifying any potential weak points in its implementation.
 This section outlines the steps we took in our evaluation process,
-beginning with the setup of the SGX-Step attack and the subsequent enabling of AEX-Notify on this attacker.
+beginning with the setup of the SGX-Step attack and
+the subsequent enabling of AEX-Notify on this attacker.
 By examining these components,
 we aimed to provide an informed assessment of AEX-Notify’s defensive capabilities.
-This analysis informs us about potential attack vectors to try,
+This analysis has informed us about potential attack vectors to try,
 offering insights into areas that may require further study.
 
 \iffalse
@@ -270,10 +271,10 @@ offering insights into areas that may require further study.
 SGX-Step requires careful configuration of the APIC timer
 since it is crucial for the attack to work.
 If the value is too small, then we will zero-step and execute the same instruction multiple times.
-If the value is too large, then we will multi-step and execute multiple instruction.
-We have used an example application provided in the SGX-Step repository for this purpose.
-This example consists only of a series of \texttt{nop} instructions and
-reports the instruction pointer after each interrupt using the \texttt{EDBRD}.
+If the value is too large, then we will multi-step and execute multiple instructions.
+We have used the benchmark application provided in the SGX-Step repository for this purpose.
+The program consists only of a series of \texttt{nop} instructions and
+reports the instruction pointer after each interrupt using the \texttt{EDBGRD} instruction.
 If the instruction pointer is incremented by one instruction each interrupt,
 then we can be sure that we are single-stepping and
 that we have configured SGX-Step correctly.
@@ -281,8 +282,8 @@ that we have configured SGX-Step correctly.
 \subsection{Enabling AEX-Notify}
 
 After configuring SGX-Step and successfully single-stepping the enclave,
-we enabled AEX-Notify for the enclave.
-We can enable AEX-Notify by simply adding an additional field in the enclave configuration file.
+we enabled AEX-Notify.
+We have enabled AEX-Notify by simply adding an additional field in the enclave configuration file.
 Enabling this flag technically requires registering an exception handler that handles any enclave exits.
 However, the exception handler is preconfigured to use the provided handler
 from the trusted runtime system of the Intel SGX SDK.
@@ -291,19 +292,21 @@ which decodes the enclave return point and prefetches the necessary code and dat
 
 \subsection{Analyzing AEX-Notify}
 
-After enabling AEX-Notify, we were particularly interested in the reported addresses from the benchmark application.
+After enabling AEX-Notify, we verified that we can no longer single-step the enclave
+by comparing the reported addresses from a previous run.
 Usually, we can use these addresses to configure the timer
 since each address is incremented by one when the timer is configured correctly.
 The problem with AEX-Notify is that interrupting the enclave not only
 interrupts the enclave but it can also interrupt the exception handler.
-In this case, the application will additionally report addresses from the exception handler.
+Hence, the application will additionally report addresses from the exception handler.
+
 For these addresses, it is not entirely clear where exactly there are from.
 Therefore, we have written a simple tool that uses the debug information from the binary and
 automatically translates these addresses to their source code location in the trusted runtime system.
 
-\todo[inline]{Explain how we analyzed AEX-Notify, i.e. comparing the source with the reported addresses.}
+%\todo[inline]{Explain how we analyzed AEX-Notify, i.e. comparing the source with the reported addresses.}
 
-The analysis has lead us to one important question regarding the exception handler:
+The overall analysis has lead us to an important question regarding the exception handler:
 whether interrupting the exception handler during the second stage would
 restart the entire exception handler again or only restart the second stage.
 If an interrupt during the second stage would only restart the second stage,
@@ -372,6 +375,9 @@ even if the handler itself is interrupted.
 By inserting a page-fault after the assembly stub re-enables AEX-Notify,
 we were able to detect that the exception handler is reset completely,
 i.e. it starts from the first phase.
+This ensures that an attacker cannot simply interrupt the exception handler
+to differentiate between a zero-step and a multi-step,
+showing the security of AEX-Notify.
 
 \section{Conclusion and Future Work}
 
