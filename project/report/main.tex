@@ -81,7 +81,7 @@ and have compared the ability to single-step with and without AEX-Notify enabled
 We have used the results from our tests to analyze AEX-Notify and
 find potential weak points in its implementation.
 Additionally, we have tested these weak points to see if an attack against AEX-Notify is feasible
-or whether AEX-Notify is secure against single-stepping.
+or whether AEX-Notify still prevents single-stepping.
 
 \section{Background}
 
@@ -102,7 +102,7 @@ that attempt to provide a secure environment for safety-critical applications.
 SGX ensures that the memory of an enclave cannot be accessed from the outside world
 even by an untrusted operating system.
 However, it still leaves the page tables under explicit control of the operating system.
-This means that the OS can modify the page-table entries,
+This means that the OS can modify the Page-Table Entries (PTEs),
 specifically the present (P), accessed (A) and dirty (D) bit.
 Modifying these bits is already enough for novel side-channel attacks \cite{TODO}.
 
@@ -194,13 +194,25 @@ into SGX-protected apps.
 
 \subsection{CopyCat}
 
-CopyCat \cite{MoghimiBHPS20} utilizes the SGX-Step framework
-to infer fine-grained control-flow information from SGX enclaves.
+CopyCat \cite{MoghimiBHPS20} demonstrates the danger of single-stepping attacks
+by utilizing SGX-Step to infer fine-grained control-flow information from SGX enclaves.
 It improves upon traditional page-fault adversaries,
 that can only page accesses at a 4 KiB resolution,
-with the single-stepping capabilities of SGX-Step.
+and uses single-stepping to capture control flow at a maximum temporal resolution.
 
-\begin{figure}[t]
+In a typical square-and-multiply implementation,
+we can use page faults to extract the key.
+On each iteration we can induce a fault by clearing the execute permission on
+the page with the \emph{square} function.
+Tracking access in each iteration, we can fully recover the key from only page faults.
+Traditional page-fault adversaries fail at recovering the key when the entire
+square-and-multiply procedure fits on a single page.
+CopyCat overcomes this challenge by single-stepping the enclave and counting the
+number of instructions until a data page was accessed.
+By comparing the data access pattern with the function, CopyCat is able to recover the key
+even if all used functions fit on a single page.
+
+\begin{figure}[t!]
   \centering
   \includegraphics{square-and-multiply.pdf}
   \caption{A typical implementation of the exponentiation function using square and multiply.
@@ -209,19 +221,6 @@ with the single-stepping capabilities of SGX-Step.
     and may reside on different pages than the exponentiation function.}
   \label{fig:square-and-multiply}
 \end{figure}
-
-In a typical square-and-multiply implementation,
-we can use page faults to extract the key.
-On each iteration we can induce a fault by clearing the execute permission on
-the page with the \emph{square} function.
-Tracking access in each iteration, we can fully recover the key from only page faults.
-
-Traditional page-fault adversaries fail at recovering the key when the entire
-square-and-multiply procedure fits on a single page.
-CopyCat overcomes this challenge by single-stepping the enclave and counting the
-number of instructions until a data page was accessed.
-By comparing the data access pattern with the function, CopyCat is able to recover the key
-even if all used functions fit on a single page.
 
 Figure~\ref{fig:square-and-multiply} illustrates the square-and-multiply example.
 There are two data accesses of interest.
@@ -248,7 +247,7 @@ Constable et al. \cite{ConstableBCXXAK23} list the main reason
 behind the effectiveness of SGX-Step as the assisted page-table walk.
 Before resuming the enclave, the attacker clears
 the ``accessed'' (A) bit on the enclave's code page.
-This forces the first instruction after \texttt{ERESUME}
+This forces the first instruction after \textsc{eresume}
 to perform an expensive microcode assist to set the A-bit.
 This induces additional latency in the execution of that instruction, because
 the processor has to walk the page table again.
@@ -259,25 +258,25 @@ and make it impossible to reliably land on the first instruction.
 
 \paragraph{Hardware Extension.}
 The first part of AEX-Notify is the hardware extension.
-It introduces a new flag in the SSA frame, called \texttt{AEXNOTIFY}.
-By enabling this flag, we change the behavior of the \texttt{ERESUME} instruction.
-Usually, \texttt{ERESUME} restores the previous process context,
-however, when the \texttt{AEXNOTIFY} bit is enabled,
+It introduces a new flag in the SSA frame, called \textsc{aexnotify}.
+By enabling this flag, we change the behavior of the \textsc{eresume} instruction.
+Usually, \textsc{eresume} restores the previous process context,
+however, when the \textsc{aexnotify} bit is enabled,
 a custom exception handler is executed.
 The exception handler is responsible for handling the AEX and
-can resume the enclave application with an additional instruction, called \texttt{EDECCSSA}.
-This instruction decrements \texttt{TCS.CSSA} and restores the context of the enclave application.
+can resume the enclave application with an additional instruction, called \textsc{edeccssa}.
+This instruction decrements \textsc{tcs.cssa} and restores the context of the enclave application.
 
 \paragraph{Software Mitigation.}
 The second part of AEX-Notify is the custom exception handler that is implemented in software.
 The exception handler is split into two stages.
 The first stage is responsible for decoding the first instruction and
 computing the accessed pages of that instruction.
-It is run with \texttt{AEXNOTIFY} disabled.
+It is run with \textsc{aexnotify} disabled.
 The second stage is responsible for prefetching the addresses from the first stage.
 It is further split into two parts.
-The first part runs with \texttt{AEXNOTIFY} disabled
-and the second, smaller assembly stub runs with \texttt{AEXNOTIFY} enabled.
+The first part runs with \textsc{aexnotify} disabled
+and the second, smaller assembly stub runs with \textsc{aexnotify} enabled.
 AEX-Notify is disabled at first to ensure that the exception handler always makes forward progress.
 
 \section{Work Description}
