@@ -204,8 +204,7 @@ and make it impossible to reliably land on the first instruction.
 
 The first part of AEX-Notify is the hardware extension.
 It introduces a new flag in the SSA frame, called \texttt{AEXNOTIFY}.
-By enabling this flag, we can change the behavior of the \texttt{ERESUME} instruction,
-which resumes the enclave.
+By enabling this flag, we change the behavior of the \texttt{ERESUME} instruction.
 Usually, \texttt{ERESUME} restores the previous process context,
 however, when the \texttt{AEXNOTIFY} bit is enabled,
 a custom exception handler is executed.
@@ -213,40 +212,25 @@ The exception handler is responsible for handling the AEX and
 can resume the enclave application with an additional instruction, called \texttt{EDECCSSA}.
 This instruction decrements \texttt{TCS.CSSA} and restores the context of the enclave application.
 
-The second part of AEX-Notify is the custom exception handler.
-The goal of the exception handler is to reduce the latency of the first instruction.
-In order to achieve this, it is important that the first instruction never causes any page faults.
-Otherwise, we would need to walk the page table again which would increase the latency of the first instruction.
-Thus, the software mitigation implements a prefetcher.
-This prefetcher will always fetch necessary code and data pages of the resumed
-instruction which ensures that no faults can occur.
-
-With the software mitigation enabled, an interrupt can arrive at three possible
-locations during the execution.
-First, it could arrive too early and land in our prefetching code.
-This would not cause any problems as resuming the enclave a second time would
-call the prefetcher again and would load the same pages as before.
-Next, the interrupt could arrive to late and land after the first instruction.
-In this case, we would have executed more than one instruction which means
-that we have successfully avoided single-stepping.
-Last, it could arrive perfectly on the first instruction.
-This is the exact case that we are trying to avoid.
-However, since the code and data pages for this instruction have already been prefetched,
-it is unlikely that an interrupt would arrive exactly on the first instruction.
-
-\todo[inline]{
-  Explain more details about the software part, i.e. the constant-time decoder,
-  c3 cache, etc. This could also be something in the work description.
-}
+The second part of AEX-Notify is the custom exception handler that is implemented in software.
+The exception handler is split into two stages.
+The first stage is responsible for decoding the first instruction and
+computing the accessed pages of that instruction.
+It is run with AEX-Notify disabled.
+The second stage is responsible for prefetching the addresses from the first stage.
+It is further split into two parts.
+The first part runs with AEX-Notify disabled
+and the second, smaller assembly stub runs with AEX-Notify enabled.
+AEX-Notify is disabled at first to ensure that the exception handler always makes forward progress.
 
 \section{Work Description}
 
 Our main goal is to analyze the effectiveness of AEX-Notify
 in preventing attackers from reliably single-stepping SGX enclaves.
 To evaluate the success of AEX-Notify in achieving this,
-we conducted a thorough analysis aimed at identifying any potential weak points in its implementation.
+we conducted an analysis aimed at identifying any potential weak points in its implementation.
 This section outlines the steps we took in our evaluation process,
-beginning with the setup of the SGX-Step attacker and the subsequent enabling of AEX-Notify on this attacker.
+beginning with the setup of the SGX-Step attack and the subsequent enabling of AEX-Notify on this attacker.
 By examining these components,
 we aimed to provide an informed assessment of AEX-Notify’s defensive capabilities.
 This analysis informs us about potential attack vectors to try,
