@@ -320,30 +320,6 @@ The last step is recognizing where this interrupt is handled.
 To achieve this, we induce another page fault on the first stage of the exception handler
 and we check whether another page fault occurs immediately after the first.
 
-\iffalse % NOTE: Disables this subsection
-  \subsection{Single-stepping Attack Implementation}
-
-  The single-stepping attack, also known as the Zigzagger attack,
-  aims to exploit vulnerabilities in SGX enclaves
-  by interrupting enclave execution at precise intervals.
-  This section provides a detailed overview of the Zigzagger attack methods and a step-by-step implementation guide.
-
-  \textbf{Introduction to Zigzagger Attack Methods:}
-  The Zigzagger attack utilizes techniques to interrupt SGX enclave execution at the instruction level,
-  thereby enabling the extraction of control-flow information.
-  It involves precise timing to resume execution either before or after specific instructions,
-  allowing an attacker to gather sensitive information.
-
-  \textbf{Step-by-step Implementation Guide:}
-  \begin{enumerate}
-    \item \textbf{Identifying Target Enclaves:} The first step involves selecting target SGX enclaves susceptible to single-stepping attacks.
-    \item \textbf{Setting Interrupt Intervals:} Determine the optimal timing intervals for interrupting enclave execution to capture control-flow information effectively.
-    \item \textbf{Implementing Interruption Mechanism:} Develop the mechanism to interrupt enclave execution using techniques such as APIC timers.
-    \item \textbf{Fine-tuning Timing:} Adjust timing parameters to ensure the interruption occurs at critical points during enclave execution.
-    \item \textbf{Testing and Validation:} Validate the implementation by running test scenarios to verify the effectiveness of the single-stepping attack in extracting control-flow information.
-  \end{enumerate}
-\fi
-
 \section{Results}
 
 \paragraph{Single-Stepping Resilience.}
