@@ -241,12 +241,16 @@ it is unlikely that an interrupt would arrive exactly on the first instruction.
 
 \section{Work Description}
 
-The goal of this project is to evaluate the effectiveness of AEX-Notify against single-stepping attackers.
-To evaluate AEX-Notify, we first had to understand how it works.
-
-\todo[inline]{Explain why we first looked into how AEX-Notify works and then
-  transition into the structure of this section.}
-
+Our main goal is to analyze the effectiveness of AEX-Notify
+in preventing attackers from reliably single-stepping SGX enclaves.
+To evaluate the success of AEX-Notify in achieving this,
+we conducted a thorough analysis aimed at identifying any potential weak points in its implementation.
+This section outlines the steps we took in our evaluation process,
+beginning with the setup of the SGX-Step attacker and the subsequent enabling of AEX-Notify on this attacker.
+By examining these components,
+we aimed to provide an informed assessment of AEX-Notify’s defensive capabilities.
+This analysis informs us about potential attack vectors to try,
+offering insights into areas that may require further study.
 
 \subsection{Experimental Setup}
 
