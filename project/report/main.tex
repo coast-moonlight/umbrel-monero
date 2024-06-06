@@ -343,6 +343,7 @@ and we check whether another page fault occurs immediately after the first.
 
 \section{Results}
 
+\paragraph{Single-Stepping Resilience.}
 As the most basic requirement,
 we were no longer able to single-step the enclave after enabling AEX-Notify.
 We were always able to reliably interrupt the application
@@ -365,6 +366,7 @@ We were able to observe different behavior depending on the number of
 If the number of instructions do not fit on a single page,
 then the most of the addresses would end up during the C3 cache.
 
+\paragraph{Interrupting the Exception Handler.}
 We were able to verify that the exception handler is always rolled back to the first phase of the exception handler
 even if the handler itself is interrupted.
 By inserting a page-fault after the assembly stub re-enables AEX-Notify,
