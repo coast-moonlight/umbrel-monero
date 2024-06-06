@@ -91,35 +91,20 @@ vulnerabilities.
 Finally, we look into the details of AEX-Notify and
 how it prevents the single-stepping capabilities of SGX-Step.
 
-\subsection{Intel SGX}
+/section{Intel SGX}
+Intel Software Guard Extensions (SGX), developed by Intel, introduces a crucial security feature enabling the creation of secure enclaves within applications \cite{CostanD16}. These enclaves establish a protected execution environment for sensitive code and data, ensuring confidentiality and integrity even if the host system is compromised.
 
-Intel Software Guard Extensions (SGX) is a security feature introduced by Intel
-that enables the creation of secure enclaves within applications \cite{CostanD16}.
-Enclaves provide a protected execution environment for sensitive code and data,
-ensuring confidentiality and integrity even if the host system is compromised.
-Key components of SGX include:
+One of the fundamental aspects of SGX is its robust memory management system. SGX enforces strict memory isolation between enclaves and non-enclave code, effectively preventing unauthorized access to enclave data.
 
-\begin{itemize}
-  \item \textbf{Memory Management:}
-    SGX enforces memory isolation between enclaves and non-enclave code,
-    preventing unauthorized access to enclave data.
-  \item \textbf{Interrupt/Exception Handling:}
-    When an interrupt occurs, it triggers an AEX (Asynchronous Enclave eXit),
-    which saves the application state in the current SSA.
-    However, the enclave application has no mechanism (without AEX-Notify) to detect an interrupt.
-  \item \textbf{TCS, SSA, TCS.CSSA:}
-    SGX defines structures such as Thread Control Structure (TCS) and Saved State Area (SSA)
-    to manage enclave execution and state transitions.
-    \texttt{TCS.CSSA} refers to the current saved state area within the TCS.
-  \item \textbf{EENTER, EEXIT:}
-    SGX instructions for entering and exiting enclaves,
-    facilitating the secure transition of control flow between enclave and non-enclave code.
-  \item \textbf{Security Goals:}
-    It's important to note that the primary goal of SGX is to protect
-    the confidentiality and integrity of enclave data and code,
-    rather than providing defenses against side-channel attacks,
-    which are the responsibility of enclave developers \cite{CostanD16}.
-\end{itemize}
+Additionally, SGX provides mechanisms for interrupt and exception handling. When an interrupt occurs, it triggers an Asynchronous Enclave eXit (AEX), preserving the application state in the current Saved State Area (SSA). However, without additional measures like AEX-Notify, enclave applications lack a mechanism to detect interrupts.
+
+To manage enclave execution and state transitions, SGX defines essential structures such as the Thread Control Structure (TCS) and Saved State Area (SSA). The \texttt{TCS.CSSA} specifically denotes the current saved state area within the TCS.
+
+Furthermore, SGX instructions, like EENTER and EEXIT, facilitate the secure transition of control flow between enclave and non-enclave code, ensuring the integrity of the enclave's execution environment.
+
+It's essential to emphasize that while SGX primarily aims to protect the confidentiality and integrity of enclave data and code, it doesn't inherently provide defenses against side-channel attacks. Developers bear the responsibility of implementing additional measures to mitigate such risks within their enclave implementations \cite{CostanD16}.
+Now
+
 
 \subsection{SGX-Step}
 
@@ -145,7 +130,10 @@ enabling finer control over interrupt timing and reducing time jitter \cite{Arna
 
 \todo[inline]{Add paragraph for monitoring page table entries and how SGX-Step
   uses it to start single-stepping once a specific page has been executed.}
+  SGX-Step's ability to precisely interrupt enclave execution is crucial for enabling side-channel attacks. By observing the execution flow at such a granular level, attackers can gain insights into the control flow and data usage patterns within the enclave. This detailed observation can be used to exploit vulnerabilities and extract sensitive information, highlighting the need for robust defenses against such attacks.
+
 \todo[inline]{Explain why SGX-Step is important $\to$ It enables side-channel attacks at instruction-level granularity}
+SGX-Step's significance lies in its capability to enable side-channel attacks at the instruction-level granularity within Intel SGX enclaves. By leveraging precise interrupts via the APIC timer, SGX-Step facilitates detailed observation of enclave execution. This enables attackers to exploit timing side-channels, identify vulnerabilities, and extract sensitive information with unprecedented accuracy. In essence, SGX-Step expands the attack surface by providing attackers with fine-grained control over enclave execution, making it a powerful tool for compromising SGX-protected applications.
 
 \subsection{CopyCat}
 
