@@ -199,10 +199,13 @@ To counter SGX-Step and the attack vectors that it enables, AEX-Notify has been 
 The purpose of AEX-Notify is to stop attackers from reliably single-stepping an enclave,
 which mitigates many attacks based on SGX-Step like CopyCat.
 
-Constable et al. \cite{ConstableBCXXAK23} list the root cause behind the effectiveness of SGX-Step as the assisted page-table walk.
-Before resuming the enclave, the SGX-Step attack clears the accessed bit on the pages,
-which causes a page fault when executing the first instruction.
-This induces additional latency in the execution of the instruction, because
+Constable et al. \cite{ConstableBCXXAK23} list the main reason
+behind the effectiveness of SGX-Step as the assisted page-table walk.
+Before resuming the enclave, the attacker clears
+the ``accessed'' (A) bit on the enclave's code page.
+This forces the first instruction after \texttt{ERESUME}
+to perform an expensive microcode assist to set the A-bit.
+This induces additional latency in the execution of that instruction, because
 the processor has to walk the page table again.
 Thus, there is a large time frame where the interrupt of the timer could
 arrive and land exactly on the first instruction.
