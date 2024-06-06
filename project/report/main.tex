@@ -65,6 +65,12 @@ for detailed observation and analysis.
   \item Potential benefits of using AEX-Notify
 \end{itemize}
 
+For Intel SGX enclaves, AEX-Notify is a security feature that prevents single-stepping attacks such as SGX-Step. Enclaves can react to possible threats by using the ability to recognize Asynchronous Enclave eXit (AEX) events.
+
+A notification mechanism for AEX events is added by AEX-Notify. In order to stop data leaking or control flow manipulation, the enclave can take defensive measures, such as deleting sensitive data or resetting execution states, when an AEX happens.
+
+The primary advantage of AEX-Notify is its capacity to improve enclave security by the detection of AEX events, which interferes with the timing required for attacks. By enabling enclaves to confirm their current state upon restart and apply adaptive security measures, it contributes to the maintenance of execution integrity by boosting resilience against a variety of interruption-based threats.
+
 \paragraph{Research Question and Objectives}
 \begin{itemize}
   \item Formulation of the \textbf{research question}:
