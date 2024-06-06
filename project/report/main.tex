@@ -1,13 +1,14 @@
 \documentclass{llncs}
 \usepackage[T1]{fontenc}
 \usepackage{graphicx}
-\usepackage{enumitem}
+\usepackage[inline]{enumitem}
 \usepackage{amsmath}
 \usepackage{listings}
 \usepackage{tikz}
 \usepackage{epstopdf}
 \usepackage{multirow}
 \usepackage{todonotes}
+\usepackage{pifont}
 
 \title{Evaluating the Effectiveness of AEX-Notify against SGX Single-Stepping Attackers}
 \author{Wicked Wench}
@@ -121,26 +122,76 @@ After an AEX, this value is incremented, such that a new enclave will use a diff
 and after resuming the enclave, this value is decremented again.
 
 \subsection{SGX-Step}
-SGX-Step \cite{BulckPS17} is a framework that enhances the ability to monitor SGX enclave execution at the instruction level, addressing vulnerabilities by enabling precise and detailed observation. It uses the APIC timer to interrupt enclave execution at specific intervals, overcoming previous challenges related to time jitter by configuring the timer in user space for finer control and reduced jitter \cite{ArnautovTGKMPLM16}.
 
-The monitoring of Page Table Entries (PTEs) is one of SGX-Step's primary features. Even if single-stepping enclave execution is quite sluggish, it can be used for certain functions alone. Single-stepping can begin using SGX-Step once a specific code or data page is accessed \cite{BulckWKPS17}. It configures mappings between user space virtual memory and the physical memory that houses the PTEs in the enclave. Using the "present" bit to cause page faults \cite{XuCP15} or the "accessed" and "dirty" properties to reveal information about how much memory is being used in the enclave, an attacker can manipulate these PTEs.
+SGX-Step \cite{BulckPS17} is a framework that enhances the ability to
+monitor SGX enclave execution at the instruction level,
+addressing vulnerabilities by enabling precise and detailed observation.
+It uses a timer from the Advanced Programmable Interrupt Controller (APIC)
+to interrupt enclave execution at specific intervals,
+overcoming previous challenges related to time jitter by
+configuring the timer in user space for finer control and reduced jitter \cite{ArnautovTGKMPLM16}.
 
-All things considered, side-channel attacks are made far more likely by SGX-Step's accurate interrupt control and PTE monitoring, which give adversaries access to critical information at the instruction level as well as comprehensive control flow information \cite{BulckPS17}.
-
-\begin{figure}[t]
+\begin{figure}[t!]
   \centering
-  \includegraphics{images/sgx-step-pte.pdf}
-  \caption{Overview of the SGX-Step attack.
-    After resuming execution, the enclave has to lookup the pages for
-    the instruction itself and the \texttt{rdi} operand. This increases the time
-    for the instruction and therefore the likelihood that an interrupts arrives
-    during the execution of that instruction.}
-  \label{fig:sgx-step-pte}
+  \includegraphics[width=0.85\textwidth]{images/sgx-step-overview.pdf}
+  \caption{Overview of the SGX-Step attack \cite{BulckPS17}.}
+  \label{fig:sgx-step}
 \end{figure}
 
-Enabling side-channel attacks depends on SGX-Step's ability to precisely halt enclave execution. Attackers can learn about the control flow and data usage patterns inside the enclave by looking at the execution flow at such a fine level. This thorough observation emphasizes the necessity of strong defenses against such assaults by showing how vulnerabilities can be exploited and sensitive data extracted.
+The overall process of SGX-Step is illustrated in Figure~\ref{fig:sgx-step} and works as follows:
+\begin{enumerate*}
+  \item[\ding{172}]
+    The enclave is interrupted by the APIC timer.
+  \item[\ding{173}]
+    The AEX procedure saves the enclave's state in the SSA
+    and hands over control to the \texttt{/dev/sgx-step} kernel module.
+  \item[\ding{174}]
+    The kernel module reads the current instruction pointer of the enclave using the \textsc{edbgrd} instruction.
+    This is meant for debugging and ensuring that the timer is configured correctly.
+  \item[\ding{175}]
+    The kernel module transfers control to the user space trampoline.
+  \item[\ding{176}]
+    From user space, the APIC timer is configured
+    such that it interrupts the first instruction after the enclave is resumed.
+  \item[\ding{177}]
+    Resume the enclave with \textsc{eresume}.
+\end{enumerate*}
 
-The importance of SGX-Step is seen in its potential to facilitate side-channel attacks within Intel SGX enclaves at the instruction level. Using the APIC timer to generate precise interrupts, SGX-Step makes it possible to observe enclave execution in detail. Attackers can now more accurately detect vulnerabilities, take advantage of timing side-channels, and extract sensitive data. By giving attackers precise control over enclave execution, SGX-Step essentially increases the attack surface and is a potent weapon for breaking into SGX-protected apps.
+One additional feature provided by SGX-Step is the monitoring of page table entries.
+Single-stepping the whole enclave can be quite sluggish.
+It would be beneficial if it can be used for certain functions alone.
+SGX-Step allows the attacker to start single-stepping
+once a specific code or data page is accessed \cite{BulckWKPS17}.
+It configures mappings between user space virtual memory and
+the physical memory that houses the PTEs in the enclave.
+Using the ``present'' bit to cause page faults \cite{XuCP15} or
+the ``accessed'' and ``dirty'' properties to reveal information about
+when a specific function is called,
+an attacker can target specific areas they want to single-step through.
+
+All things considered, side-channel attacks are made far more likely by
+SGX-Step's accurate interrupt control and PTE monitoring,
+which give adversaries access to critical information at the instruction level
+as well as comprehensive control flow information \cite{BulckPS17}.
+
+Enabling side-channel attacks depends on SGX-Step's ability to precisely halt
+enclave execution.
+Attackers can learn about the control flow and data usage patterns inside the
+enclave by looking at the execution flow at such a fine level.
+This thorough observation emphasizes the necessity of strong defenses against
+such assaults by showing how vulnerabilities can be exploited and sensitive
+data extracted.
+
+The importance of SGX-Step is seen in its potential to facilitate side-channel
+attacks within Intel SGX enclaves at the instruction level.
+Using the APIC timer to generate precise interrupts, SGX-Step makes it possible
+to observe enclave execution in detail.
+Attackers can now more accurately detect vulnerabilities, take advantage of
+timing side-channels, and extract sensitive data.
+By giving attackers precise control over enclave execution, SGX-Step
+essentially increases the attack surface and is a potent weapon for breaking
+into SGX-protected apps.
+
 \subsection{CopyCat}
 
 CopyCat \cite{MoghimiBHPS20} utilizes the SGX-Step framework
