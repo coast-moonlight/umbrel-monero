@@ -202,6 +202,7 @@ arrive and land exactly on the first instruction.
 The goal of AEX-Notify is to reduce the latency of the first instruction
 and make it impossible to reliably land on the first instruction.
 
+\paragraph{Hardware Extension.}
 The first part of AEX-Notify is the hardware extension.
 It introduces a new flag in the SSA frame, called \texttt{AEXNOTIFY}.
 By enabling this flag, we change the behavior of the \texttt{ERESUME} instruction.
@@ -212,6 +213,7 @@ The exception handler is responsible for handling the AEX and
 can resume the enclave application with an additional instruction, called \texttt{EDECCSSA}.
 This instruction decrements \texttt{TCS.CSSA} and restores the context of the enclave application.
 
+\paragraph{Software Mitigation.}
 The second part of AEX-Notify is the custom exception handler that is implemented in software.
 The exception handler is split into two stages.
 The first stage is responsible for decoding the first instruction and
