@@ -271,13 +271,15 @@ We have used an example application provided in the SGX-Step repository for this
 This example consists only of a series of \texttt{nop} instructions and
 reports the instruction pointer after each interrupt using the \texttt{EDBRD}.
 If the instruction pointer is incremented by one instruction each interrupt,
-then we can be sure that we are single-stepping the enclave.
+then we can be sure that we are single-stepping and
+that we have configured SGX-Step correctly.
 
-\subsection{Implementation Details for Applying AEX-Notify}
+\subsection{Enabling AEX-Notify}
 
-After configuring SGX-Step and successfully single-stepping the enclave, we enabled AEX-Notify on the example.
+After configuring SGX-Step and successfully single-stepping the enclave,
+we enabled AEX-Notify for the enclave.
 We can enable AEX-Notify by simply adding an additional field in the enclave configuration file.
-Enabling this flag requires registering an exception handler for any enclave exit that occurs.
+Enabling this flag technically requires registering an exception handler that handles any enclave exits.
 However, the exception handler is preconfigured to use the provided handler
 from the trusted runtime system of the Intel SGX SDK.
 This is the exact same exception handler as described in Section~\ref{sec:aex-notify},
