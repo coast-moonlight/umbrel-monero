@@ -85,19 +85,32 @@ vulnerabilities.
 Finally, we look into the details of AEX-Notify and
 how it prevents the single-stepping capabilities of SGX-Step.
 
-\section{Intel SGX}
+\subsection{Intel SGX}
 
-The security feature that allows for the construction of safe enclaves within applications is introduced by Intel Software Guard Extensions (SGX) \cite{CostanD16}. Sensitive code and data are placed in protected execution environments known as enclaves, which guarantee confidentiality and integrity even in the event that the host system is compromised.
+The main feature behind Intel SGX are enclaves,
+that attempt to provide a secure environment for safety-critical applications.
+SGX ensures that the memory of an enclave cannot be accessed from the outside world
+even by an untrusted operating system.
+However, it still leaves the page tables under explicit control of the operating system.
+This means that the OS can modify the page-table entries,
+specifically the present (P), accessed (A) and dirty (D) bit.
+Modifying these bits is already enough for novel side-channel attacks \cite{TODO}.
 
-The strong memory management system of SGX is one of its core features. In order to effectively prevent unwanted access to enclave data, SGX imposes rigorous memory segregation between enclaves and non-enclave programs.
+The operating system also has control over the execution of the enclave.
+The main structure that controls the execution of an enclave is the Thread Control Structure.
+A thread can enter an enclave by calling the \textsc{eenter} instruction and providing an address to one such TCS.
+The enclave can be exited by calling the \textsc{eexit} instruction.
+During the execution of an enclave,
+the operating system has the ability to interrupt the enclave,
+for example by inducing a page-fault.
+This causes an Asynchronous Enclave Exit (AEX) to occur,
+which is similar to a context switch for normal processes.
+The procedure saves the register state in a Saved State Area (SSA) inside the enclave.
+This state is later restored once the enclave is resumed using the \textsc{eresume} instruction.
+More specifically, the TCS has a \textsc{cssa} field that indicates the index of the current SSA.
+After an AEX, this value is incremented, such that a new enclave will use a different SSA,
+and after resuming the enclave, this value is decremented again.
 
-Moreover, SGX offers exception and interrupt management techniques. An Asynchronous Enclave eXit (AEX) is initiated in response to an interrupt, maintaining the state of the program in the active Saved State Area (SSA). However, enclave programs lack an interrupt detection mechanism in the absence of supplementary measures such as AEX-Notify.
-
-SGX defines key constructs including the Thread Control Structure (TCS) and Saved State Area (SSA) to control enclave execution and state transitions. The current stored state area within the TCS is specifically indicated by the \texttt{TCS.CSSA}.
-
-In addition, SGX instructions such as EENTER and EEXIT help to maintain the integrity of the enclave's execution environment by facilitating a safe transfer of control flow between enclave and non-enclave code.
-
-It is important to note that SGX does not by itself offer protection against side-channel attacks, even if its primary goal is to safeguard the integrity and confidentiality of enclave data and code. It is the duty of developers to incorporate extra precautions to lessen these dangers in their enclave implementations \cite{CostanD16}.
 \subsection{SGX-Step}
 SGX-Step \cite{BulckPS17} is a framework that enhances the ability to monitor SGX enclave execution at the instruction level, addressing vulnerabilities by enabling precise and detailed observation. It uses the APIC timer to interrupt enclave execution at specific intervals, overcoming previous challenges related to time jitter by configuring the timer in user space for finer control and reduced jitter \cite{ArnautovTGKMPLM16}.
 
