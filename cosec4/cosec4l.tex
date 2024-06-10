@@ -1,0 +1,20 @@
+\documentclass[sheet=2, english]{dexercise}
+
+\title{Computer Security}
+\author{Basil Ugbomoiko\\Daniel Knaack}
+\setlist[enumerate, 2]{label={\sffamily\small\color{maincolor}\roman*}.}
+
+\begin{document}
+
+\task[Spectre]
+
+\begin{enumerate}
+  \item See \texttt{spectre.c}
+  \item The \texttt{lfence} instruction needs to be placed inside the if
+    statement before the access to the array.
+    The instruction halts all speculative execution and waits for loads to complete.
+    Therefore, the array access is only executed when the if statement is actually true.
+\end{enumerate}
+
+\end{document}
+
