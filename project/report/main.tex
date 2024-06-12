@@ -29,7 +29,7 @@
   pose significant threats to the security guarantees provided by SGX.
   SGX-Step uses the APIC timer to precisely interrupt the enclave after each instruction,
   effectively stepping through the execution one instruction at a time.
-  These single-stepping capabilities allow much greater granularity for side-channel,
+  These single-stepping capabilities allow for a higher time resolution,
   thereby enhancing the feasibility of side-channel attacks.
   In response to this threat, AEX-Notify has been proposed as a potential mitigation against SGX-Step.
   AEX-Notify is both a hardware extension and a software mitigation that tries
@@ -63,19 +63,13 @@ for detailed observation and analysis.
 For Intel SGX enclaves, AEX-Notify is a security feature that prevents
 single-stepping attacks such as SGX-Step \cite{ConstableBCXXAK23}. Enclaves can
 react to possible threats by using the ability to recognize Asynchronous
-Enclave eXit (AEX) events. A notification mechanism for AEX events is added by
-AEX-Notify. In order to stop data leaking or control flow manipulation, the
-enclave can take defensive measures, such as deleting sensitive data or
-resetting execution states, when an AEX happens.
+Enclave eXit (AEX) events. AEX-Notify introduces a notification mechanism for Asynchronous Enclave Exits (AEX) events within Intel SGX enclaves. AEX events occur when the processor interrupts the execution of an enclave to handle external events such as interrupts or exceptions. These interruptions can be exploited by attackers to perform timing attacks or manipulate the control flow of the enclave.
 
-The primary advantage of AEX-Notify is its capacity to improve enclave security
-by the detection of AEX events, which interferes with the timing required for
-attacks. By enabling enclaves to confirm their current state upon restart and
-apply adaptive security measures, it contributes to the maintenance of
-execution integrity by boosting resilience against a variety of
-interruption-based threats \cite{ConstableBCXXAK23}.
+The main mechanism of AEX-Notify involves detecting AEX events and notifying the enclave when they occur. Upon receiving this notification, the enclave can take defensive actions to protect sensitive information. These actions may include deleting sensitive data or resetting execution states to ensure that no critical information is exposed during the interruption.
 
-This paper attempts to evaluate the effectiveness of AEX-Notify against single-stepping.
+The primary advantage of AEX-Notify lies in its ability to improve the security of the enclave by disrupting the precise timing required for certain types of attacks. By enabling enclaves to verify their state upon resumption and apply adaptive security measures, AEX-Notify helps maintain the integrity of the execution environment. This increases the resilience of the enclave against various interruption-based threats, thereby enhancing overall security.\cite{ConstableBCXXAK23}.
+
+This paper attempts to evaluate the effectiveness of AEX-Notify in mitigating single-stepping attacks against SGX enclaves.
 Specifically, we have tested AEX-Notify on an attacker implementation
 and have compared the ability to single-step with and without AEX-Notify enabled.
 We have used the results from our tests to analyze AEX-Notify and
@@ -85,16 +79,9 @@ or whether AEX-Notify still prevents single-stepping.
 
 \section{Background}
 
-This section provides a comprehensive review of existing research and frameworks
-relevant to the evaluation of AEX-Notify against SGX single-stepping attackers.
-In particular, we outline the workings of Intel SGX and
-discuss how SGX-Step leverages the APIC timer to single-step enclaves.
-Following this, we examine CopyCat, which leverages SGX-Step to extract
-control-flow information from enclaves, highlighting potential security
-vulnerabilities.
-Finally, we look into the details of AEX-Notify and
-how it prevents the single-stepping capabilities of SGX-Step.
+This section provides an overview of Intel Software Guard Extensions (SGX) and the mechanism of Asynchronous Enclave Exits (AEX). We discuss the basic workings of Intel SGX, which enables the creation of secure enclaves that protect the confidentiality and integrity of the data and code within them, even from higher-privileged software such as the operating system.
 
+\section{Related Work}
 \subsection{Intel SGX}
 
 The main feature behind Intel SGX are enclaves,
@@ -115,7 +102,7 @@ the operating system has the ability to interrupt the enclave,
 for example by inducing a page-fault.
 This causes an Asynchronous Enclave Exit (AEX) to occur,
 which is similar to a context switch for normal processes.
-The procedure saves the register state in a Saved State Area (SSA) inside the enclave.
+The procedure saves the register state in a State Save Area (SSA) inside the enclave.
 This state is later restored once the enclave is resumed using the \textsc{eresume} instruction.
 More specifically, the TCS has a \textsc{cssa} field that indicates the index of the current SSA.
 After an AEX, this value is incremented, such that a new enclave will use a different SSA,
@@ -126,10 +113,7 @@ and after resuming the enclave, this value is decremented again.
 SGX-Step \cite{BulckPS17} is a framework that enhances the ability to
 monitor SGX enclave execution at the instruction level,
 addressing vulnerabilities by enabling precise and detailed observation.
-It uses a timer from the Advanced Programmable Interrupt Controller (APIC)
-to interrupt enclave execution at specific intervals,
-overcoming previous challenges related to time jitter by
-configuring the timer in user space for finer control and reduced jitter \cite{ArnautovTGKMPLM16}.
+It uses a timer from the Advanced Programmable Interrupt Controller (APIC) to interrupt enclave execution at specific intervals. This approach overcomes previous challenges related to time jitter by configuring the timer in user space, which allows for finer control and reduced jitter. \cite{ArnautovTGKMPLM16}.
 
 \begin{figure}[t!]
   \centering
@@ -180,13 +164,13 @@ like extracting memory access patterns through the cache side channel \cite{Hahn
 CopyCat \cite{MoghimiBHPS20} demonstrates the danger of single-stepping attacks
 by utilizing SGX-Step to infer fine-grained control-flow information from SGX enclaves.
 It improves upon traditional page-fault adversaries,
-that can only page accesses at a 4 KiB resolution,
+that can only observe page accesses at a 4 KiB resolution,
 and uses single-stepping to capture control flow at a maximum temporal resolution.
 CopyCat has even been used to defeat a compiler hardening technique \cite{HosseinzadehLLP18} that was
 suppose to withstand the SGX-Step attack.
 
 We explain how CopyCat works using the example of square-and-multiply.
-In a typical square-and-multiply implementation,
+In a vulnerable square-and-multiply implementation,
 we can use page faults to extract the key.
 On each iteration we can induce a fault by clearing the execute permission on
 the page with the \emph{square} function.
@@ -209,7 +193,7 @@ even if all used functions fit on a single page.
 \end{figure}
 
 Figure~\ref{fig:square-and-multiply} illustrates the square-and-multiply example.
-There are two data accesses of interest.
+There are two data accesses of interest. The code fits on a single page, but we still access the variables on a separate data page. Therefore, we can observe code and data page accesses.
 The first is the access to the output message $m$ that is squared on each iteration.
 The second is the access to the cipher text when we multiply $m$ by $c$.
 This data access only happens when the key bit $d[i]$ equals one.
@@ -250,7 +234,7 @@ Usually, \textsc{eresume} restores the previous process context,
 however, when the \textsc{aexnotify} bit is enabled,
 a custom exception handler is executed.
 The exception handler is responsible for handling the AEX and
-can resume the enclave application with an additional instruction, called \textsc{edeccssa}.
+can afterwards resume the enclave application with an additional instruction, called \textsc{edeccssa}.
 This instruction decrements \textsc{tcs.cssa} and restores the context of the enclave application.
 
 \paragraph{Software Mitigation.}
@@ -296,8 +280,8 @@ privileged access to the hardware and software stack to launch attacks against S
 
 SGX-Step requires careful configuration of the APIC timer
 since it is crucial for the attack to work.
-If the value is too small, then we will zero-step and execute the same instruction multiple times.
-If the value is too large, then we will multi-step and execute multiple instructions.
+If the value is too small, we will zero-step and execute the same instruction multiple times.
+If the value is too large, we will multi-step and execute multiple instructions.
 We have used the benchmark application provided in the SGX-Step repository for this purpose.
 The program consists only of a series of \textsc{nop} instructions and
 reports the instruction pointer after each interrupt using the \textsc{edbgrd} instruction.
@@ -326,7 +310,7 @@ The problem with AEX-Notify is that interrupting the enclave not only
 interrupts the enclave but it can also interrupt the exception handler.
 Hence, the application will additionally report addresses from the exception handler.
 
-For these addresses, it is not entirely clear where exactly there are from.
+For these addresses, it is not entirely clear where exactly they are located. Typically, they are found within the binary. In debug mode, the instruction pointer can help identify these addresses.
 Therefore, we have written a simple tool that uses the debug information from the binary and
 automatically translates these addresses to their source code location in the trusted runtime system.
 
@@ -357,7 +341,7 @@ by using the additional page-fault side channel provided by SGX-Step.
 However, we were unable to reliably execute one or
 even multiple instructions after executing the first.
 
-The reason was that we were no longer just interrupting the enclave but also the exception handler of AEX-Notify.
+The first instruction is no longer artificially prolonged, and there is now a random delay in the interrupt handler. Without these two measures, it would still be possible to configure a timer interval that could skip over the exception handler and land directly on the first instruction.
 Since the application reports the instruction pointer of the enclave,
 we could see that the addresses no longer correspond to only our target.
 Instead, most of these addresses pointed to the exception handler.
@@ -369,8 +353,8 @@ by only configuring the APIC timer.
 % TODO: Report about C3 Cache
 
 \paragraph{Interrupting the Exception Handler.}
-We were able to verify that the exception handler is always rolled back to the first phase of the exception handler
-even if the handler itself is interrupted.
+We were able to verify that the exception handler is always rolled back to the first phase of the exception handler.
+This is still the case, even if we interrupt the second stage, where AEX-Notify is re-enabled.
 By inserting a page-fault after the assembly stub re-enables AEX-Notify,
 we were able to detect that the exception handler is reset completely,
 i.e. it starts from the first phase.
@@ -382,9 +366,7 @@ showing the security of AEX-Notify.
 
 With this study, we explored the functionality of AEX-Notify in Intel SGX and
 its effectiveness in preventing single-stepping attacks.
-Our experiments showed that once AEX-Notify is enabled,
-single-stepping attacks are no longer feasible,
-indicating that AEX-Notify is effective in stopping such attacks.
+Our experiments showed that once AEX-Notify is enabled, single-stepping attacks become significantly more difficult, strengthening the argument that AEX-Notify is effective in mitigating such attacks.
 
 In conclusion, our findings suggest that AEX-Notify is a promising feature for enhancing SGX security,
 but additional testing is necessary to confirm its effectiveness against a wider range of attacks.
