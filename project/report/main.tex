@@ -81,7 +81,6 @@ or whether AEX-Notify still prevents single-stepping.
 
 This section provides an overview of Intel Software Guard Extensions (SGX) and the mechanism of Asynchronous Enclave Exits (AEX). We discuss the basic workings of Intel SGX, which enables the creation of secure enclaves that protect the confidentiality and integrity of the data and code within them, even from higher-privileged software such as the operating system.
 
-\section{Related Work}
 \subsection{Intel SGX}
 
 The main feature behind Intel SGX are enclaves,
@@ -107,6 +106,8 @@ This state is later restored once the enclave is resumed using the \textsc{eresu
 More specifically, the TCS has a \textsc{cssa} field that indicates the index of the current SSA.
 After an AEX, this value is incremented, such that a new enclave will use a different SSA,
 and after resuming the enclave, this value is decremented again.
+
+\section{Related Work}
 
 \subsection{SGX-Step}
 
