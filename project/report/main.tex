@@ -92,6 +92,13 @@ This means that the OS can modify the Page-Table Entries (PTEs),
 specifically the present (P), accessed (A) and dirty (D) bit.
 Modifying these bits is already enough for novel side-channel attacks \cite{XuCP15,BulckWKPS17}.
 
+\begin{figure}
+  \centering
+  \includegraphics[width=0.7\textwidth]{images/sgx-ssa.pdf}
+  \caption{Overview of \textsc{eenter} and \textsc{eresume}.}
+  \label{fig:sgx-ssa}
+\end{figure}
+
 The operating system also has control over the execution of the enclave.
 The main structure that controls the execution of an enclave is the Thread Control Structure.
 A thread can enter an enclave by calling the \textsc{eenter} instruction and providing an address to one such TCS.
