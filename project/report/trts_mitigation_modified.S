@@ -1,10 +1,10 @@
-; \arg %rsi code_tickle_address
-;             L -> bit 0: whether to write to data address
-;             L -> bit 4: whether to add cycle delay
-; \arg %rdx data_tickle_address
-; \arg %rbp stack1_tickle_address
-; \arg %rbx stack2_tickle_address
-; \arg %rdi cr3_code_byte_address
+# \arg %rsi code_tickle_address
+#             L -> bit 0: whether to write to data address
+#             L -> bit 4: whether to add cycle delay
+# \arg %rdx data_tickle_address
+# \arg %rbp stack1_tickle_address
+# \arg %rbx stack2_tickle_address
+# \arg %rdi cr3_code_byte_address
 .ct_enable_aexnotify:
     mov     RSVD_AEXNOTIFY_ADDRESS_OFFSET(%rsp), %rax
     movb    $1, (%rax)
@@ -45,7 +45,7 @@ __ct_mitigation_begin:
     jrcxz  .ct_restore_rcx
     CYCLE_DELAY 20, %rsp
 .ct_restore_rcx:
-    ; Cache attack simulation
+    # Cache attack simulation
     mov     cache_access_counter(%rip), %rcx
     jrcxz   .is_null_pointer
     incl    (%rcx)
