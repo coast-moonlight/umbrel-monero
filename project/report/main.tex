@@ -112,7 +112,7 @@ Modifying these bits is already enough for novel side-channel attacks \cite{XuCP
 \begin{figure}
   \centering
   \includegraphics[width=0.6\textwidth]{images/sgx-ssa.pdf}
-  \caption{Behavior of \texttt{eenter} and \texttt{eresume} \cite{ConstableBCXXAK23}.
+  \caption{Behavior of \textsc{eenter} and \textsc{eresume} \cite{ConstableBCXXAK23}.
     After an AEX occurs, the \textsc{cssa} field is incremented \protect\greenbox{A},
     such that the next \textsc{eenter} \protect\greenbox{B} and \textsc{eexit} \protect\greenbox{C} instructions use a different SSA.
     \textsc{eresume} decrements the \textsc{cssa} field again \protect\greenbox{D}
