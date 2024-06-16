@@ -377,6 +377,35 @@ The last step is recognizing where this interrupt is handled.
 To achieve this, we induce another page fault on the first stage of the exception handler
 and we check whether another page fault occurs immediately after the first.
 
+\subsection{Simulating a Cache Attack}
+
+Our assumption is that we are able to detect when the last page access occurs
+during the second stage of the exception handler.
+The idea would be that one would use a side-channel, like a cache attack, to detect when this happens.
+However, we assume an idealized scenario where we simulate an attack by
+incrementing a variable that is shared between the enclave and the attacker.
+We have modified the exception handler such that it increments the shared
+variable once the second stage is finished.
+The attacker can then monitor this variable for any changes.
+Once the variable is incremented, the attacker reconfigures the APIC timer to immediately interrupt the enclave again.
+The goal of this attack is to see whether it is possible to distinguish between
+zero-stepping and multi-stepping.
+
+After incrementing the variable, the exception handler inserts a random delay
+before resuming the enclave.
+The delay may cause our second interrupt -- the one after the simulated cache
+access -- to interrupt the exception handler and not the enclave.
+This would cause us to zero-step instead of multi-stepping.
+Therefore, we'll have to be able to distinguish zero-stepping from
+multi-stepping for our attack to be effective.
+
+We have introduced a second counter to help test our multi-stepping attack.
+This counter is incremented after each instruction from the victim code,
+which essentially forms another instruction pointer.
+This instruction pointer tells us how far the enclave has advanced.
+This counter is only for testing the effectiveness of our attack
+and is not used inside the attack itself.
+
 \section{Results}
 
 \paragraph{Single-Stepping Resilience.}
