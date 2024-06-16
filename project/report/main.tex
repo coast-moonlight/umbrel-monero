@@ -338,8 +338,6 @@ For these addresses, it is not entirely clear where exactly they are located. Ty
 Therefore, we have written a simple tool that uses the debug information from the binary and
 automatically translates these addresses to their source code location in the trusted runtime system.
 
-%\todo[inline]{Explain how we analyzed AEX-Notify, i.e. comparing the source with the reported addresses.}
-
 The overall analysis has lead us to an important question regarding the exception handler:
 whether interrupting the exception handler during the second stage would
 restart the entire exception handler again or only restart the second stage.
@@ -373,8 +371,6 @@ Between these addresses, sometimes the program would report addresses from our t
 However, the addresses always jumped at least several instructions from the previous
 and we were never able to reliably cause a controlled multi-step attack
 by only configuring the APIC timer.
-
-% TODO: Report about C3 Cache
 
 \paragraph{Interrupting the Exception Handler.}
 We were able to verify that the exception handler is always rolled back to the first phase of the exception handler.
