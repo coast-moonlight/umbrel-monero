@@ -10,6 +10,22 @@
 \usepackage{todonotes}
 \usepackage{pifont}
 
+\lstset{
+  numbers=left,
+  numberstyle=\tiny\ttfamily\color{black!40},
+}
+
+\lstdefinestyle{code}{
+  basicstyle=\ttfamily\scriptsize,
+  commentstyle=\color{black!50},
+  classoffset=0,
+  keywordstyle=\color{red!50!black!70},
+  morekeywords={mov,movb,lfence,movl,shlx,jrcxz,lea,shrx,shlx,call,jmp,incl},
+  classoffset=1,
+  keywordstyle=\color{blue!50!black!70},
+  morekeywords={ct_enable_aexnotify,__ct_mitigation_begin,ct_check_write,ct_clear_low_bits_of_rdx,ct_check_execute,ct_warm_caches_and_tlbs,ct_restore_stage,ct_restore_rcx,is_null_pointer},
+}
+
 \title{Evaluating the Effectiveness of AEX-Notify against SGX Single-Stepping Attackers}
 \author{Wicked Wench}
 \institute{	University of L\"ubeck, Germany}
@@ -394,4 +410,26 @@ but additional testing is necessary to confirm its effectiveness against a wider
 \bibliographystyle{alpha}
 %\bibliographystyle{splncs03}
 \bibliography{references}
+
+\backmatter
+\appendix
+
+\section{Modified Second Stage of the AEX-Notify Exception Handler}
+
+The following code lists the second stage of the exception handler from AEX-Notify,
+where the code and data pages are prefetched.
+Our modification (highlighted in green) increments a counter shared between the enclave and attacker.
+The counter's address is loaded into \textsc{rcx} and incremented, but only if it is not null to prevent null pointer dereferencing.
+
+\noindent
+\rule{0.8\textwidth}{0.4pt}
+\vspace{-0.5em}
+\lstinputlisting[style=code,lastline=47]{trts_mitigation_modified.S}%
+\vspace{-1.1em}
+\lstinputlisting[firstnumber=48, firstline=48,lastline=51, basicstyle=\ttfamily\scriptsize\bfseries\color{green!50!black}]{trts_mitigation_modified.S}%
+\vspace{-1.1em}
+\lstinputlisting[style=code,firstnumber=52, firstline=52]{trts_mitigation_modified.S}
+\vspace{-1em}
+\rule{0.8\textwidth}{0.4pt}
+
 \end{document}
