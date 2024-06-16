@@ -134,6 +134,7 @@ This state is later restored once the enclave is resumed using the \textsc{eresu
 More specifically, the TCS has a \textsc{cssa} field that indicates the index of the current SSA.
 After an AEX, this value is incremented, such that a new enclave will use a different SSA,
 and after resuming the enclave, this value is decremented again.
+Figure~\ref{fig:sgx-ssa} illustrates this process.
 
 \section{Related Work}
 
