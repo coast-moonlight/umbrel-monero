@@ -265,6 +265,15 @@ arrive and land exactly on the first instruction.
 The goal of AEX-Notify is to reduce the latency of the first instruction
 and make it impossible to reliably land on the first instruction.
 
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.6\textwidth]{images/sgx-ssa-edeccssa.pdf}
+  \caption{Difference between the behavior of \textsc{eresume} when AEX-Notify is disabled (left) and when AEX-Notify is enabled (right).
+  When AEX-Notify is enabled, an exception handler is executed with the top SSA \protect\greenbox{B}.
+  The handler resumes the enclave with the new \textsc{edeccssa} instruction \protect\greenbox{C}, which decrements \textsc{cssa}.}
+  \label{fig:aex-notify-edeccssa}
+\end{figure}
+
 \paragraph{Hardware Extension.}
 The first part of AEX-Notify is the hardware extension.
 It introduces a new flag in the SSA frame, called \textsc{aexnotify}.
@@ -275,6 +284,7 @@ a custom exception handler is executed.
 The exception handler is responsible for handling the AEX and
 can afterwards resume the enclave application with an additional instruction, called \textsc{edeccssa}.
 This instruction decrements \textsc{tcs.cssa} and restores the context of the enclave application.
+Figure~\ref{fig:aex-notify-edeccssa} shows the difference between resuming an enclave with and without AEX-Notify enabled.
 
 \paragraph{Software Mitigation.}
 The second part of AEX-Notify is the custom exception handler that is implemented in software.
