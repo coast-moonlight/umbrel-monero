@@ -245,7 +245,8 @@ flow at a maximum temporal resolution.
 CopyCat has even been used to defeat a compiler hardening technique
 \cite{HosseinzadehLLP18} that was suppose to withstand the SGX-Step attack.
 
-We explain how CopyCat works using the example of square-and-multiply.
+We explain how CopyCat works using the example of square-and-multiply,
+as shown in Figure~\ref{fig:square-and-multiply}.
 In a vulnerable square-and-multiply implementation, we can use page faults to
 extract the key.
 On each iteration we can induce a fault by clearing the execute permission on
@@ -262,19 +263,17 @@ recover the key even if all used functions fit on a single page.
 \begin{figure}[t!]
   \centering
   \includegraphics{square-and-multiply.pdf}
-  \caption{A typical implementation of the exponentiation function using square and multiply.
+  \caption{A vulnerable implementation of the exponentiation function using square and multiply.
     The function calculates $c^d$ where $c$ and $d$ are natural numbers.
     It is important to note that \emph{square} and \emph{multiply} are separate functions
     and may reside on different pages than the exponentiation function.}
   \label{fig:square-and-multiply}
 \end{figure}
 
-Figure~\ref{fig:square-and-multiply} illustrates the square-and-multiply
-example.
-The code fits on a single page,
-but we still access the variables on a separate data page.
-There are two data accesses of interest.
+Although the code fits on a single page,
+we still access the variables on a separate data page.
 Therefore, we can observe code and data page accesses.
+There are two data accesses of interest.
 The first is the access to the output message $m$ that is squared on each
 iteration.
 The second is the access to the cipher text when we multiply $m$ by $c$.
