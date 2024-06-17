@@ -359,8 +359,9 @@ The first stage is responsible for decoding the first instruction and computing
 a working set of the accessed pages from the first instruction.
 This is done by decoding the first instruction and examining the saved SSA of
 the enclave to retrieve potential memory locations.
-The instruction decoder works in constant time \cite{TODO} such that it does
-not leak any information about the instruction through timing attacks.
+The instruction decoder works adheres to constant time programming guidelines
+\cite{Intel22}, which ensures that it does not leak any information about the
+instruction through timing attacks.
 The working set is then passed to the second stage, where the memory locations
 are prefetched to ensure that the first instruction can always be executed
 quickly.
