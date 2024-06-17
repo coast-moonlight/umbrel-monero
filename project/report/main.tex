@@ -81,31 +81,23 @@ the means to interrupt enclave execution at the instruction level for detailed
 observation and analysis.
 
 For Intel SGX enclaves, AEX-Notify is a security feature that prevents
-single-stepping attacks such as SGX-Step \cite{ConstableBCXXAK23}. Enclaves can
-react to possible threats by using the ability to recognize Asynchronous
-Enclave eXit (AEX) events.
+single-stepping attacks such as SGX-Step \cite{ConstableBCXXAK23}.
+Enclaves can react to possible threats by using the ability to recognize
+Asynchronous Enclave eXit (AEX) events.
 AEX-Notify introduces a notification mechanism for Asynchronous Enclave Exits
-(AEX) events within Intel SGX enclaves.
+events within Intel SGX enclaves.
 AEX events occur when the processor interrupts the execution of an enclave to
 handle external events such as interrupts or exceptions.
 These interruptions can be exploited by attackers to perform timing attacks or
 manipulate the control flow of the enclave.
 
-The main mechanism of AEX-Notify involves detecting AEX events and notifying
-the enclave when they occur.
-Upon receiving this notification, the enclave can take defensive actions to
-protect sensitive information.
-These actions may include deleting sensitive data or resetting execution states
-to ensure that no critical information is exposed during the interruption.
-
-The primary advantage of AEX-Notify lies in its ability to improve the security
-of the enclave by disrupting the precise timing required for certain types of
-attacks.
-By enabling enclaves to verify their state upon resumption and apply adaptive
-security measures, AEX-Notify helps maintain the integrity of the execution
-environment.
-This increases the resilience of the enclave against various interruption-based
-threats, thereby enhancing overall security.
+The main mechanism of AEX-Notify consist of a hardware extension, that allows
+SGX enclaves to be notified of an AEX event after they have been resumed, and a
+software component, that prefetches the memory accessed by the first
+instruction.
+By speeding up the first instruction, AEX-Notify ensures that
+any interrupt will have a smaller time window to hit the first instruction.
+This makes it harder for tools like SGX-Step to single-step the enclave.
 
 This paper attempts to evaluate the effectiveness of AEX-Notify in mitigating
 single-stepping attacks against SGX enclaves.
