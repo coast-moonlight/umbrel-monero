@@ -230,19 +230,21 @@ even if all used functions fit on a single page.
   \label{fig:square-and-multiply}
 \end{figure}
 
-Figure~\ref{fig:square-and-multiply} illustrates the square-and-multiply example.
-There are two data accesses of interest. The code fits on a single page, but we still access the variables on a separate data page. Therefore, we can observe code and data page accesses.
-The first is the access to the output message $m$ that is squared on each iteration.
+Figure~\ref{fig:square-and-multiply} illustrates the square-and-multiply
+example.
+The code fits on a single page,
+but we still access the variables on a separate data page.
+There are two data accesses of interest.
+Therefore, we can observe code and data page accesses.
+The first is the access to the output message $m$ that is squared on each
+iteration.
 The second is the access to the cipher text when we multiply $m$ by $c$.
 This data access only happens when the key bit $d[i]$ equals one.
 Hence, we will have three data accesses to $c$, $m$ and $d$ in one iteration,
 while we will have only two accesses if the key bit is zero.
 Therefore, by counting the number of instructions in each iteration,
-CopyCat can recover the key even if the cipher text, output and key are on the same page.
-
-%\todo[inline]{Add paragraph explaining why this is a problem in the context of
-%  the SGX attacker model. Because technically side-channel attacks are not a
-%  concern for SGX, but they still implemented AEX-Notify.}
+CopyCat can recover the key even if the cipher text, output and key are on the
+same page.
 
 \subsection{AEX-Notify}
 \label{sec:aex-notify}
