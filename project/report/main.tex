@@ -252,8 +252,18 @@ To counter SGX-Step and the attack vectors that it enables, AEX-Notify has been 
 The purpose of AEX-Notify is to stop attackers from reliably single-stepping an enclave,
 which mitigates many attacks based on SGX-Step like CopyCat.
 
-Constable et al. \cite{ConstableBCXXAK23} list the main reason
-behind the effectiveness of SGX-Step as the assisted page-table walk.
+\begin{figure}
+  \centering
+  \includegraphics{images/sgx-step-pte.pdf}
+  \caption{The main reason behind the effectiveness of SGX-Step is the assisted page-table walk \cite{ConstableBCXXAK23}.
+    The \textsc{mov} instruction has to access the code page (\textsf{\itshape\$RIP}) and the memory location (\textsf{\itshape\$RDI}).
+    The accessed bit has been cleared on both pages, causing a page walk for both accesses.}
+  \label{fig:pte-walk}
+\end{figure}
+
+Constable et al. \cite{ConstableBCXXAK23} list the main reason behind the
+effectiveness of SGX-Step as the assisted page-table walk, as shown in
+Figure~\ref{fig:pte-walk}.
 Before resuming the enclave, the attacker clears
 the ``accessed'' (A) bit on the enclave's code page.
 This forces the first instruction after \textsc{eresume}
@@ -276,27 +286,43 @@ and make it impossible to reliably land on the first instruction.
 
 \paragraph{Hardware Extension.}
 The first part of AEX-Notify is the hardware extension.
-It introduces a new flag in the SSA frame, called \textsc{aexnotify}.
-By enabling this flag, we change the behavior of the \textsc{eresume} instruction.
-Usually, \textsc{eresume} restores the previous process context,
-however, when the \textsc{aexnotify} bit is enabled,
-a custom exception handler is executed.
-The exception handler is responsible for handling the AEX and
-can afterwards resume the enclave application with an additional instruction, called \textsc{edeccssa}.
-This instruction decrements \textsc{tcs.cssa} and restores the context of the enclave application.
-Figure~\ref{fig:aex-notify-edeccssa} shows the difference between resuming an enclave with and without AEX-Notify enabled.
+It introduces a new flag in the SSA frame, called \textsc{aexnotify}. By
+enabling this flag, we change the behavior of the \textsc{eresume} instruction.
+Usually, \textsc{eresume} restores the previous process context, however, when
+the \textsc{aexnotify} bit is enabled, a custom exception handler is executed.
+The exception handler is responsible for handling the AEX and can afterwards
+resume the enclave application with an additional instruction, called
+\textsc{edeccssa}.
+This instruction decrements the \textsc{tcs.cssa} field and restores the
+context of the original enclave application.
+Figure~\ref{fig:aex-notify-edeccssa} shows the difference between resuming an
+enclave with and without AEX-Notify enabled.
 
 \paragraph{Software Mitigation.}
-The second part of AEX-Notify is the custom exception handler that is implemented in software.
-The exception handler is split into two stages.
-The first stage is responsible for decoding the first instruction and
-computing the accessed pages of that instruction.
-It is run with \textsc{aexnotify} disabled.
-The second stage is responsible for prefetching the addresses from the first stage.
-It is further split into two parts.
-The first part runs with \textsc{aexnotify} disabled
-and the second, smaller assembly stub runs with \textsc{aexnotify} enabled.
+The second part of AEX-Notify is the custom exception handler implemented in software.
+The handler runs after calling \textsc{eresume} and
+uses the new \textsc{edeccssa} instruction to resume the enclave.
+The exception handler's task is to prefetch the pages that the enclave accesses during execution of the first instruction.
+This process is split into two stages.
+
+The first stage is responsible for decoding the first instruction and computing
+a working set of the accessed pages from the first instruction.
+This is done by decoding the first instruction and examining the saved SSA of
+the enclave to retrieve potential memory locations.
+The instruction decoder works in constant time \cite{TODO} such that it does
+not leak any information about the instruction through timing attacks.
+The working set is then passed to the second stage, where the memory locations
+are prefetched to ensure that the first instruction can always be executed
+quickly.
+Before resuming the enclave, an additional delay of 20 cycles is inserted with 50 \% probability,
+making it even harder to reliably interrupt after the second stage.
+
+
+The first stage runs entirely with AEX-Notify disabled
+and AEX-Notify is re-enabled during the second stage before prefetching the pages.
 AEX-Notify is disabled at first to ensure that the exception handler always makes forward progress.
+However, it is re-enabled before prefetching to ensure that the pages are \emph{always} prefetched
+before the enclave is resumed.
 
 \section{Work Description}
 
