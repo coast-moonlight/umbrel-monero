@@ -254,7 +254,7 @@ which mitigates many attacks based on SGX-Step like CopyCat.
 
 \begin{figure}
   \centering
-  \includegraphics{images/sgx-step-pte.pdf}
+  \includegraphics{images/sgx-step-without-prefetch.pdf}
   \caption{The main reason behind the effectiveness of SGX-Step is the assisted page-table walk \cite{ConstableBCXXAK23}.
     The \textsc{mov} instruction has to access the code page (\textsf{\itshape\$RIP}) and the memory location (\textsf{\itshape\$RDI}).
     The accessed bit has been cleared on both pages, causing a page walk for both accesses.}
