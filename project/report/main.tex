@@ -338,7 +338,7 @@ It introduces a new flag in the SSA frame, called \textsc{aexnotify}.
 Enabling this flag modifies the behavior of the \textsc{eresume} instruction.
 Usually, \textsc{eresume} restores the previous process context, however, when
 the \textsc{aexnotify} bit is enabled, a custom exception handler is executed.
-The exception handler is responsible for handling the AEX and can afterwards
+The exception handler is responsible for handling the AEX and can, afterwards,
 resume the enclave application with an additional instruction, called
 \textsc{edeccssa}.
 This instruction decrements the \textsc{tcs.cssa} field and restores the
