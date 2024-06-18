@@ -548,14 +548,24 @@ to differentiate between a zero-step and a multi-step,
 showing the security of AEX-Notify.
 
 \paragraph{Simulated Cache Attack.}
+In our attempt to simulate a cache attack and interrupt the SGX enclave upon
+detecting cache access, we encountered significant challenges.
+Specifically, we aimed to use the APIC timer to generate a local interrupt to
+disrupt the enclave.
+However, despite reconfiguring the APIC timer as required, no second interrupt
+was successfully triggered.
+This indicates a failure in our setup to appropriately generate and deliver the
+necessary interrupts to the SGX enclave, thereby preventing us from achieving
+the intended interruption and testing the response of the enclave under cache
+attack conditions.
 
-As an alternative, we have induced a page fault on the counter page to
-interrupt the enclave.
+As an alternative, we have induced a page fault on the instruction counter page
+to interrupt the enclave.
 Although this did successfully interrupt our enclave, it would usually take
 more than $5\,000$ instructions until the interrupt arrived.
 Such a large time frame defeats the purpose of multi-stepping using interrupts
 since a regular page-fault adversary can already leak control-flow information
-at a 4 KiB (spatial) granularity \cite{TODO}.
+at a 4 KiB (spatial) granularity \cite{XuCP15}.
 
 \section{Conclusion and Future Work}
 
