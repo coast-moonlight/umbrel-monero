@@ -63,7 +63,7 @@ interactions and ensure security.
 However, traditional operating system kernels are susceptible to bugs and
 vulnerabilities due to their large codebase written in unsafe languages.
 To address this, recent research has focused on Protected Module Architectures
-(PMAs), aiming to support isolated execution of security-sensitive components
+(PMAs) \cite{MaeneGCMFV18,CostanLD16,Intel17}, aiming to support isolated execution of security-sensitive components
 called enclaves with minimal Trusted Computing Base (TCB).
 Intel’s Software Guard eXtensions (SGX) \cite{Intel16,Intel17} represent a
 significant advancement, providing hardware-enforced trusted computing
@@ -80,8 +80,8 @@ The framework comprises a Linux kernel driver and a runtime library, providing
 the means to interrupt enclave execution at the instruction level for detailed
 observation and analysis.
 
-For Intel SGX enclaves, AEX-Notify is a security feature that prevents
-single-stepping attacks such as SGX-Step \cite{ConstableBCXXAK23}.
+For Intel SGX enclaves, AEX-Notify \cite{ConstableBCXXAK23} is a security feature that prevents
+single-stepping attacks such as SGX-Step.
 Enclaves can react to possible threats by using the ability to recognize
 Asynchronous Enclave eXit (AEX) events.
 AEX-Notify introduces a notification mechanism for Asynchronous Enclave Exits
