@@ -575,9 +575,22 @@ at a 4 KiB (spatial) granularity \cite{XuCP15}.
 
 With this study, we explored the functionality of AEX-Notify in Intel SGX and
 its effectiveness in preventing single-stepping attacks.
-Our experiments showed that once AEX-Notify is enabled, single-stepping attacks
-become significantly more difficult, strengthening the argument that AEX-Notify
-is effective in mitigating such attacks.
+Our analysis of interrupts during the exception handler further confirmed the
+robustness of AEX-Notify.
+Even when the handler was interrupted during its second phase, the system
+consistently reset to the initial phase of the exception handling process.
+This ensures that an attacker cannot simply distinguish zero-stepping from
+multi-stepping by measuring page accesses to the first and second-stage of the
+exception handler.
+
+However, our attempt to simulate a cache attack and interrupt the enclave upon
+detecting cache accesses encountered challenges.
+Specifically, we were unable to generate and deliver the required second
+interrupt using the APIC timer, leading to a failure in interrupting the
+enclave as intended.
+As a workaround, inducing a page fault on the instruction counter page did
+interrupt the enclave, but with a delay exceeding 5,000 instructions, limiting
+the utility of this method for multi-step attacks.
 
 In conclusion, our findings suggest that AEX-Notify is a promising feature for
 enhancing SGX security, but additional testing is necessary to confirm its
