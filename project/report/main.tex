@@ -135,8 +135,10 @@ specifically the present (P), accessed (A) and dirty (D) bit.
   \centering
   \includegraphics[width=0.6\textwidth]{images/sgx-ssa.pdf}
   \caption{Behavior of \textsc{eenter} and \textsc{eresume} \cite{ConstableBCXXAK23}.
-    After an AEX occurs, the \textsc{cssa} field is incremented \protect\greenbox{A},
-    such that the next \textsc{eenter} \protect\greenbox{B} and \textsc{eexit} \protect\greenbox{C} instructions use a different SSA.
+    After an AEX occurs, the \textsc{cssa} field is incremented
+    \protect\greenbox{A}, such that the next \textsc{eenter}
+    \protect\greenbox{B} and \textsc{eexit} \protect\greenbox{C} instructions
+    use a different SSA.
     \textsc{eresume} decrements the \textsc{cssa} field again \protect\greenbox{D}
     and resumes the original enclave.}
   \label{fig:sgx-ssa}
@@ -439,8 +441,8 @@ After enabling AEX-Notify, we verified that we can no longer single-step the
 enclave by comparing the reported addresses from a previous run.
 Usually, we can use these addresses to configure the timer since each address
 is incremented by one when the timer is configured correctly.
-The problem with AEX-Notify is that interrupting the enclave not only
-interrupts the enclave but it can also interrupt the exception handler.
+The problem after enabling AEX-Notify is that interrupting the enclave not only
+interrupts the enclave but may interrupt the exception handler.
 Hence, the application will additionally report addresses from the exception
 handler.
 
@@ -575,11 +577,13 @@ effectiveness against a wider range of attacks.
 \appendix
 
 \section{Modified Second Stage of the AEX-Notify Exception Handler}
-
-The following code lists the second stage of the exception handler from AEX-Notify \cite{ConstableBCXXAK23},
-where the code and data pages are prefetched.
-Our modification (highlighted in green) increments a counter shared between the enclave and attacker.
-The counter's address is loaded into \textsc{rcx} and incremented, but only if it is not null to prevent null pointer dereferencing.
+The following code lists the second stage of the exception handler from
+AEX-Notify \cite{ConstableBCXXAK23}, where the code and data pages are
+prefetched.
+Our modification (highlighted in green) increments a counter shared between the
+enclave and attacker.
+The counter's address is loaded into \textsc{rcx} and incremented, but only if
+it is not null to prevent null pointer dereferencing.
 
 \noindent
 \rule{0.8\textwidth}{0.4pt}
