@@ -548,9 +548,9 @@ is re-enabled.
 By inserting a page-fault after the assembly stub re-enables AEX-Notify, we
 were able to detect that the exception handler is reset completely, i.e. it
 starts from the first phase.
-This ensures that an attacker cannot simply interrupt the exception handler
-to differentiate between a zero-step and a multi-step,
-showing the security of AEX-Notify.
+This ensures that an attacker cannot simply interrupt the exception handler and
+measure accesses to the pages of the first and second stage to differentiate
+between a zero-step and a multi-step, showing the security of AEX-Notify.
 
 \paragraph{Simulated Cache Attack.}
 In our attempt to simulate a cache attack and interrupt the SGX enclave upon
