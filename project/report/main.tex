@@ -180,8 +180,8 @@ single-stepping capabilities of SGX-Step.
 \subsection{SGX-Step}
 
 SGX-Step \cite{BulckPS17} is a framework that enhances the ability to monitor
-SGX enclave execution at the instruction level, enhancing side-channel attacks by
-enabling precise and detailed observation.
+SGX enclave execution at the instruction level, amplifying side-channel attacks
+by enabling precise and detailed observation.
 It uses a timer from the Advanced Programmable Interrupt Controller (APIC) to
 interrupt enclave execution at specific intervals.
 This approach overcomes previous challenges related to time jitter by
@@ -234,7 +234,7 @@ The dangers of SGX-Step lie in its ability to amplify side-channel attacks.
 By repeatedly interrupting the enclave after each instruction, the attacker can
 gain information about a side-channel at maximal temporal resolution.
 This has already been applied to various attack vectors, like extracting memory
-access patterns through the cache side channel \cite{HahnelCP17}.
+access patterns through a cache side channel \cite{HahnelCP17}.
 
 \subsection{CopyCat}
 
@@ -508,7 +508,8 @@ multi-stepping for our attack to be effective.
 We have introduced a second counter to help test our multi-stepping attack.
 This counter is incremented after each instruction from the victim code,
 which essentially forms another instruction pointer.
-This instruction pointer tells us how far the enclave has advanced.
+This instruction pointer tells us how far the enclave's execution has advanced,
+even if we break inside the exception handler and not the victim code.
 This counter is only for testing the effectiveness of our attack
 and is not used inside the attack itself.
 
