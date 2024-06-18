@@ -479,10 +479,11 @@ We simulate such an attack by incrementing a variable that is shared between
 the enclave and the attacker.
 We have modified the exception handler such that it increments the shared
 variable once the second stage is finished.
-The attacker can then monitor this variable for any changes.
-Once the variable is incremented, the attacker reconfigures the APIC timer to
-immediately interrupt the enclave again.
-The goal of this attack is to see whether it is possible to distinguish between
+Our modification is listed in Appendix~\ref{apx:modification}.
+The attacker can then monitor this variable for any changes on a separate spy thread.
+Once the variable is incremented, the attacker reconfigures the APIC timer
+inside the spy thread to immediately interrupt the enclave again.
+The aim of this attack is to see whether it is possible to distinguish between
 zero-stepping and multi-stepping.
 
 \begin{figure}[t]
@@ -587,6 +588,8 @@ effectiveness against a wider range of attacks.
 \appendix
 
 \section{Modified Second Stage of the AEX-Notify Exception Handler}
+\label{apx:modification}
+
 The following code lists the second stage of the exception handler from
 AEX-Notify \cite{ConstableBCXXAK23}, where the code and data pages are
 prefetched.
