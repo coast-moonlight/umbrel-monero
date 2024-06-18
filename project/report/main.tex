@@ -483,6 +483,17 @@ immediately interrupt the enclave again.
 The goal of this attack is to see whether it is possible to distinguish between
 zero-stepping and multi-stepping.
 
+\begin{figure}[t]
+  \includegraphics{images/cache-attack.pdf}
+  \caption{Overview of our simulated cache attack.
+    After interrupting the enclave \ding{172} and resuming it \ding{173},
+    control is transferred to the exception handler due to AEX-Notify.
+    The exception handler increments a shared variable \ding{174}
+    and resume the enclave using \textsc{edeccssa} \ding{175}.
+    Our spy thread monitors this variable for changes and reconfigures
+    the APIC timer \ding{176} to interrupt the enclave a second time \ding{177}.}
+\end{figure}
+
 After incrementing the variable, the exception handler inserts a random delay
 before resuming the enclave.
 The delay may cause our second interrupt -- the one after the simulated cache
