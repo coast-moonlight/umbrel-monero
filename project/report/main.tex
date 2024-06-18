@@ -63,8 +63,9 @@ interactions and ensure security.
 However, traditional operating system kernels are susceptible to bugs and
 vulnerabilities due to their large codebase written in unsafe languages.
 To address this, recent research has focused on Protected Module Architectures
-(PMAs) \cite{MaeneGCMFV18,CostanLD16,Intel17}, aiming to support isolated execution of security-sensitive components
-called enclaves with minimal Trusted Computing Base (TCB).
+(PMAs) \cite{MaeneGCMFV18,CostanLD16,Intel17}, aiming to support isolated
+execution of security-sensitive components called enclaves with minimal Trusted
+Computing Base (TCB).
 Intel’s Software Guard eXtensions (SGX) \cite{Intel16,Intel17} represent a
 significant advancement, providing hardware-enforced trusted computing
 guarantees.
@@ -72,8 +73,9 @@ However, vulnerabilities have emerged, particularly in information leakage
 through attacks exploiting various system components.
 These vulnerabilities undermine the security promises of SGX.
 
-SGX-Step \cite{BulckPS17} presents a novel framework to address SGX vulnerabilities by enabling
-precise monitoring of enclave execution at the instruction level.
+SGX-Step \cite{BulckPS17} presents a novel framework to amplify SGX
+vulnerabilities by enabling precise monitoring of enclave execution at the
+instruction level.
 Unlike previous methods, SGX-Step achieves true single-stepping for any enclave
 program, significantly enhancing the resolution of existing attacks.
 The framework comprises a Linux kernel driver and a runtime library, providing
@@ -117,6 +119,8 @@ secure enclaves that protect the confidentiality and integrity of the data and
 code within them, even from higher-privileged software such as the operating
 system.
 
+% TODO: Not happy about the fact, that we only have one subsection here.
+%       We should either have two or remove this title.
 \subsection{Intel SGX}
 
 The main feature behind Intel SGX are enclaves, that attempt to provide a
@@ -146,23 +150,27 @@ specifically the present (P), accessed (A) and dirty (D) bit.
 
 The operating system also has control over the execution of the enclave.
 The main structure that controls the execution of an enclave is the Thread
-Control Structure.
-A thread can enter an enclave by calling the \textsc{eenter} instruction and
-providing an address to one such TCS.
-The enclave can be exited by calling the \textsc{eexit} instruction.
+Control Structure (TCS).
+A thread can enter an enclave by calling the \textsc{eenter} instruction,
+which requires the address of one such TCS.
+The enclave can be exited again by calling the \textsc{eexit} instruction.
 During the execution of an enclave, the operating system has the ability to
 interrupt the enclave, for example by inducing a page-fault.
 This causes an Asynchronous Enclave Exit (AEX) to occur, which is similar to a
-context switch for normal processes.
+context switch for regular processes.
+Figure~\ref{fig:sgx-ssa} illustrates this process.
 The procedure saves the register state in a State Save Area (SSA) inside the
 enclave.
 This state is later restored once the enclave is resumed using the
 \textsc{eresume} instruction.
 More specifically, the TCS has a \textsc{cssa} field that indicates the index
-of the current SSA.
-After an AEX, this value is incremented, such that a new enclave will use a
-different SSA, and after resuming the enclave, this value is decremented again.
-Figure~\ref{fig:sgx-ssa} illustrates this process.
+of the currently used SSA.
+After an AEX, this value is incremented, such that calling \textsc{eenter}
+again will use a different SSA for the new enclave.
+But after resuming the old enclave, the value is decremented again, such that
+the old enclave will use the previous SSA.
+This ensures that different enclaves use different SSAs even when they are
+executed concurrently.
 
 \section{Related Work}
 
@@ -206,7 +214,7 @@ works as follows:
   \item[\ding{174}]
     The kernel module reads the current instruction pointer of the enclave
     using the \textsc{edbgrd} instruction.
-    This is meant for debugging and ensuring that the timer is configured
+    This is only meant for debugging and ensuring that the timer is configured
     correctly.
   \item[\ding{175}]
     The kernel module transfers control to the user space trampoline.
@@ -214,14 +222,16 @@ works as follows:
     From user space, the APIC timer is configured such that it interrupts the
     first instruction after the enclave is resumed.
   \item[\ding{177}]
-    Resume the enclave with \textsc{eresume}.
+    Resume the enclave with \textsc{eresume} and
+    wait until the next interrupt arrives.
 \end{enumerate*}
 
-One additional feature provided by SGX-Step is the monitoring of page table
-entries.
-Single-stepping the whole enclave can be quite sluggish.
+Although this process allows us to effectively single-step the enclave,
+single-stepping the \emph{entire} enclave can be quite sluggish.
 It would be beneficial if it can be used for certain functions alone.
-SGX-Step allows the attacker to start single-stepping once a specific code or
+Therefore, SGX-Step provides an additional feature that monitors the page table
+entries of the enclave's code pages.
+This allows the attacker to start single-stepping once a specific code or
 data page is accessed \cite{BulckWKPS17}.
 It configures mappings between user space virtual memory and the physical
 memory that houses the PTEs in the enclave.
@@ -242,7 +252,7 @@ CopyCat \cite{MoghimiBHPS20} demonstrates the danger of single-stepping attacks
 by utilizing SGX-Step to infer fine-grained control-flow information from SGX
 enclaves.
 It improves upon traditional page-fault adversaries, that can only observe page
-accesses at a 4 KiB resolution, and uses single-stepping to capture control
+accesses at a 4 KiB resolution, by using single-stepping to capture control
 flow at a maximum temporal resolution.
 CopyCat has even been used to defeat a compiler hardening technique
 \cite{HosseinzadehLLP18} that was suppose to withstand the SGX-Step attack.
@@ -251,7 +261,7 @@ We explain how CopyCat works using the example of square-and-multiply,
 as shown in Figure~\ref{fig:square-and-multiply}.
 In a vulnerable square-and-multiply implementation, we can use page faults to
 extract the key.
-On each iteration we can induce a fault by clearing the execute permission on
+On each iteration, we can induce a fault by clearing the execute permission on
 the page with the \emph{square} function.
 Tracking access in each iteration, we can fully recover the key from only page
 faults.
@@ -272,10 +282,11 @@ recover the key even if all used functions fit on a single page.
   \label{fig:square-and-multiply}
 \end{figure}
 
-Although the code fits on a single page,
-we still access the variables on a separate data page.
-Therefore, we can observe code and data page accesses.
-There are two data accesses of interest.
+In the example of square-and-multiply, the code may fit on a single page,
+however, we still access the variables on a separate data page.
+Therefore, we can differentiate between code and data page accesses
+and count the number of instructions in between.
+In the example, there are two accesses of interest.
 The first is the access to the output message $m$ that is squared on each
 iteration.
 The second is the access to the cipher text when we multiply $m$ by $c$.
@@ -308,7 +319,7 @@ enclave, which mitigates many attacks based on SGX-Step like CopyCat.
 \end{figure}
 
 Constable et al. \cite{ConstableBCXXAK23} list the main reason behind the
-effectiveness of SGX-Step as the assisted page-table walk, as shown in
+effectiveness of SGX-Step as the assisted page-table walk, as illustrated in
 Figure~\ref{fig:pte-walk}.
 Before resuming the enclave, the attacker clears the ``accessed'' (A) bit on
 the enclave's code page.
@@ -318,8 +329,9 @@ This induces additional latency in the execution of that instruction, because
 the processor has to walk the page table again.
 Thus, there is a large time frame where the interrupt of the timer could arrive
 and land exactly on the first instruction.
-The goal of AEX-Notify is to reduce the latency of the first instruction and
+Therefore, the goal of AEX-Notify is to reduce the latency of the first instruction and
 make it impossible to reliably land on the first instruction.
+AEX-Notify consists of two parts.
 
 \begin{figure}[t]
   \centering
@@ -336,17 +348,16 @@ make it impossible to reliably land on the first instruction.
 
 \paragraph{Hardware Extension.}
 The first part of AEX-Notify is the hardware extension.
-It introduces a new flag in the SSA frame, called \textsc{aexnotify}.
+It introduces a new flag in the SSA frame, appropriately called \textsc{aexnotify}.
 Enabling this flag modifies the behavior of the \textsc{eresume} instruction.
 Usually, \textsc{eresume} restores the previous process context, however, when
 the \textsc{aexnotify} bit is enabled, a custom exception handler is executed.
 The exception handler is responsible for handling the AEX and can, afterwards,
-resume the enclave application with an additional instruction, called
-\textsc{edeccssa}.
+resume the enclave application with a new instruction, called \textsc{edeccssa}.
 This instruction decrements the \textsc{tcs.cssa} field and restores the
 context of the original enclave application.
 Figure~\ref{fig:aex-notify-edeccssa} shows the difference between resuming an
-enclave with and without AEX-Notify enabled.
+enclave with and without the \textsc{aexnotify} flag enabled.
 
 \paragraph{Software Mitigation.}
 The second part of AEX-Notify is the custom exception handler implemented in
@@ -355,15 +366,16 @@ The handler runs after calling \textsc{eresume} and
 uses the new \textsc{edeccssa} instruction to resume the enclave.
 The exception handler's task is to prefetch the pages that the enclave accesses
 during execution of the first instruction.
-This process is split into two stages.
+This guarantees that the first instruction always executes quickly.
+The software part is further split into two stages.
 
-The first stage is responsible for decoding the first instruction and computing
-a working set of the accessed pages from the first instruction.
+The first stage is responsible for computing a working set of the accessed
+memory locations from the first instruction.
 This is done by decoding the first instruction and examining the saved SSA of
 the enclave to retrieve potential memory locations.
-The instruction decoder works adheres to constant time programming guidelines
-\cite{Intel22}, which ensures that it does not leak any information about the
-instruction through timing attacks.
+The instruction decoder adheres to constant time programming guidelines
+\cite{Intel22}, which ensures that the decoder does not leak any information
+about the decoded instruction through timing attacks.
 The working set is then passed to the second stage, where the memory locations
 are prefetched to ensure that the first instruction can always be executed
 quickly.
@@ -559,7 +571,7 @@ Specifically, we aimed to use the APIC timer to generate a local interrupt to
 disrupt the enclave.
 However, despite reconfiguring the APIC timer as required, no second interrupt
 was successfully triggered.
-This indicates a failure in our setup to appropriately generate and deliver the
+This suggests that our setup did not appropriately generate and deliver the
 necessary interrupts to the SGX enclave, thereby preventing us from achieving
 the intended interruption and testing the response of the enclave under cache
 attack conditions.
@@ -567,7 +579,7 @@ attack conditions.
 As an alternative, we have induced a page fault on the instruction counter page
 to interrupt the enclave.
 Although this did successfully interrupt our enclave, it would usually take
-more than $5\,000$ instructions until the interrupt arrived.
+more than 5,000 instructions until the interrupt arrived.
 Such a large time frame defeats the purpose of multi-stepping using interrupts
 since a regular page-fault adversary can already leak control-flow information
 at a 4 KiB (spatial) granularity \cite{XuCP15}.
@@ -580,9 +592,9 @@ Our analysis of interrupts during the exception handler further confirmed the
 robustness of AEX-Notify.
 Even when the handler was interrupted during its second phase, the system
 consistently reset to the initial phase of the exception handling process.
-This ensures that an attacker cannot simply distinguish zero-stepping from
-multi-stepping by measuring page accesses to the first and second-stage of the
-exception handler.
+This ensures that an attacker cannot distinguish between zero-stepping and
+multi-stepping attacks simply by measuring page accesses during the first and
+second stages of the exception handler.
 
 However, our attempt to simulate a cache attack and interrupt the enclave upon
 detecting cache accesses encountered challenges.
@@ -590,7 +602,7 @@ Specifically, we were unable to generate and deliver the required second
 interrupt using the APIC timer, leading to a failure in interrupting the
 enclave as intended.
 As a workaround, inducing a page fault on the instruction counter page did
-interrupt the enclave, but with a delay exceeding $5\,000$ instructions, limiting
+interrupt the enclave, but with a delay exceeding 5,000 instructions, limiting
 the utility of this method for multi-step attacks.
 
 In conclusion, our findings suggest that AEX-Notify is a promising feature for
