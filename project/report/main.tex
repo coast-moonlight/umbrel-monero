@@ -482,21 +482,6 @@ and we check whether another page fault occurs immediately after the first.
 
 \subsection{Simulating a Cache Attack}
 
-Our assumption is that we are able to detect when the last page access occurs
-during the second stage of the exception handler.
-The idea would be that one would use a side-channel, like a cache attack, to
-detect when this happens.
-We simulate such an attack by incrementing a variable that is shared between
-the enclave and the attacker.
-We have modified the exception handler such that it increments the shared
-variable once the second stage is finished.
-Our modification is listed in Appendix~\ref{apx:modification}.
-The attacker can then monitor this variable for any changes on a separate spy thread.
-Once the variable is incremented, the attacker reconfigures the APIC timer
-inside the spy thread to immediately interrupt the enclave again.
-The aim of this attack is to see whether it is possible to distinguish between
-zero-stepping and multi-stepping.
-
 \begin{figure}[t]
   \includegraphics{images/cache-attack.pdf}
   \caption{Overview of our simulated cache attack.
@@ -506,7 +491,24 @@ zero-stepping and multi-stepping.
     and resume the enclave using \textsc{edeccssa} \ding{175}.
     Our spy thread monitors this variable until it changes and reconfigures
     the APIC timer \ding{176} to interrupt the enclave a second time \ding{177}.}
+  \label{fig:cache-attack}
 \end{figure}
+
+Our assumption is that we are able to detect when the last page access occurs
+during the second stage of the exception handler.
+The idea would be that one would use a side-channel, like a cache attack, to
+detect when this happens.
+We simulate such an attack by incrementing a variable that is shared between
+the enclave and the attacker.
+An overview of our attack is illustrated in Figure~\ref{fig:cache-attack}.
+We have modified the exception handler such that it increments the shared
+variable once the second stage is finished.
+Our modification is listed in Appendix~\ref{apx:modification}.
+The attacker can then monitor this variable for any changes on a separate spy thread.
+Once the variable is incremented, the attacker reconfigures the APIC timer
+inside the spy thread to immediately interrupt the enclave again.
+The aim of this attack is to see whether it is possible to distinguish between
+zero-stepping and multi-stepping.
 
 After incrementing the variable, the exception handler inserts a random delay
 before resuming the enclave.
