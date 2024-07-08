@@ -156,10 +156,12 @@ interrupt the enclave, for example by inducing a page-fault.
 This causes an Asynchronous Enclave Exit (AEX) to occur, which is similar to a
 context switch for regular processes.
 Figure~\ref{fig:sgx-ssa} illustrates this process.
-The procedure saves the register state in a State Save Area (SSA) inside the
-enclave.
-This state is later restored once the enclave is resumed using the
-\textsc{eresume} instruction.
+The procedure involves saving the register state in a State Save Area (SSA)
+within the enclave, allowing the operating system to run its exception handler.
+After the exception handler completes its execution, control is passed to a
+procedure outside the enclave via the Asynchronous Exit Pointer (AEP).
+This procedure can then use the \textsc{eresume} instruction to resume the
+enclave, restoring the previously saved SSA.
 More specifically, the TCS has a \textsc{cssa} field that indicates the index
 of the currently used SSA.
 After an AEX, this value is incremented, such that calling \textsc{eenter}
@@ -214,7 +216,7 @@ works as follows:
     This is only meant for debugging and ensuring that the timer is configured
     correctly.
   \item[\ding{175}]
-    The kernel module transfers control to the user space trampoline.
+    The kernel module transfers control back to user space via the AEP.
   \item[\ding{176}]
     From user space, the APIC timer is configured such that it interrupts the
     first instruction after the enclave is resumed.
@@ -345,7 +347,7 @@ AEX-Notify consists of two parts.
 
 \paragraph{Hardware Extension.}
 The first part of AEX-Notify is the hardware extension.
-It introduces a new flag in the SSA frame, appropriately called \textsc{aexnotify}.
+It introduces a new flag in the SSA frame, called \textsc{aexnotify}.
 Enabling this flag modifies the behavior of the \textsc{eresume} instruction.
 Usually, \textsc{eresume} restores the previous process context, however, when
 the \textsc{aexnotify} bit is enabled, a custom exception handler is executed.
