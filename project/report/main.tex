@@ -132,7 +132,7 @@ specifically the present (P), accessed (A) and dirty (D) bit.
 \newcommand\greenbox[1]{\tikz[baseline=(a.base)]\protect\node[enumerate] (a) {#1};}
 
 \tikzset{enumerate/.style={draw, thick, green!70!black, font=\sffamily\scriptsize, inner sep=2pt}}
-\begin{figure}
+\begin{figure}[t]
   \centering
   \includegraphics[width=0.6\textwidth]{images/sgx-ssa.pdf}
   \caption{Behavior of \textsc{eenter} and \textsc{eresume} \cite{ConstableBCXXAK23}.
@@ -302,7 +302,7 @@ proposed.
 The purpose of AEX-Notify is to stop attackers from reliably single-stepping an
 enclave, which mitigates many attacks based on SGX-Step like CopyCat.
 
-\begin{figure}
+\begin{figure}[t]
   \centering
   \includegraphics{images/sgx-step-without-prefetch.pdf}
   \caption{
