@@ -322,8 +322,8 @@ effectiveness of SGX-Step as the assisted page-table walk, as illustrated in
 Figure~\ref{fig:pte-walk}.
 Before resuming the enclave, the attacker clears the ``accessed'' (A) bit on
 the enclave's code page.
-This forces the first instruction after \textsc{eresume}
-to perform an expensive microcode assist to set the A-bit.
+Consequently, the enclave is forced to perform an expensive microcode assist
+before executing the first instruction.
 This induces additional latency in the execution of that instruction, because
 the processor has to walk the page table again.
 Thus, there is a large time frame where the interrupt of the timer could arrive
