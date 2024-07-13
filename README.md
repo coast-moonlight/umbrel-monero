@@ -33,7 +33,7 @@ Open a terminal and clone the Monero node repository:
 ```sh
 git clone https://github.com/deverickapollo/umbrel-monero.git
 
-cd monero-node-for-umbrel ### replace `monero-node-for-umbrel` with the actual directory name if different
+cd umbrel-monero
 ```
 
 ## 2. Modify const.js for Local Development
